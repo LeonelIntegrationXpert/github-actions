@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="8bd5ba45-8051-44dd-ab2e-86ee3d222943" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="github-actionsFlow" doc:id="160acff7-26fe-492e-bad8-958e55b9354e" >
+		<http:listener doc:name="Listener" doc:id="2bae2203-c3be-40ac-a86d-c4354be0fe8d" config-ref="HTTP_Listener_config" path="/test"/>
+		<set-payload value='#["It workerd!"]' doc:name="Set Payload" doc:id="b589af8c-fb3d-4d71-b578-744eec8f94a0" />
+		<logger level="INFO" doc:name="Logger" doc:id="96af6994-3c01-45f8-bb6f-a4987824c798" message="#[payload]"/>
+	</flow>
+</mule>
