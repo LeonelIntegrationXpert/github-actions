@@ -42,6 +42,10 @@ local.properties
 # Studio-specific #
 # --------------- #
 target/
-.mule/
+.mule/**
+.mule/**/*
 .DS_Store
 velocity.log
+reports/
+.tooling-project
+.vscode/settings.json
