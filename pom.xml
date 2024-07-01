@@ -20,8 +20,6 @@
 		<app.name>amartinez17-github-actions</app.name>
 		<env>Sandbox</env>
 		<munit.version>2.3.13</munit.version>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 
 	<build>
