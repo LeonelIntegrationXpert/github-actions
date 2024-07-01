@@ -55,7 +55,7 @@
 					<classifier>mule-application</classifier>
 				</configuration>
 			</plugin>
-		</plugins>
+		</plugins> 
 	</build>
 
 	<dependencies>
