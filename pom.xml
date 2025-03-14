@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.mycompany</groupId>
+	<groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
 	<artifactId>github-actions</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>mule-application</packaging>
@@ -14,12 +14,13 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-		<app.runtime>4.7.0</app.runtime>
-		<mule.maven.plugin.version>4.2.0</mule.maven.plugin.version>
-		<app.name>amartinez24-github-actions</app.name>
+		<mule.maven.plugin.version>4.1.1</mule.maven.plugin.version> <!-- use at least v4.1.0 -->
 		<env>Sandbox</env>
-		<munit.version>3.2.1</munit.version>
+		<releaseChannel>NONE</releaseChannel> <!-- use `NONE` for Mule Runtime 4.4 or `LTS`/`EDGE` for 4.6+ -->
+		<region>Cloudhub-US-East-2</region> <!-- make sure it's one of these Target Names: https://docs.mulesoft.com/cloudhub-2/ch2-architecture#regions-and-dns-records -->
+		<!-- note: free trial accounts only have access to Cloudhub-US-East-2 -->
+		<serverId>Repository</serverId> <!-- can be whatever you want, just make sure it matches the settings.xml -->
+		<munit.version>3.1.0</munit.version>
 	</properties>
 
 	<build>
@@ -35,35 +36,30 @@
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<cloudHub2Deployment>
-						<uri>https://anypoint.mulesoft.com</uri>
-						<muleVersion>${app.runtime}</muleVersion>
-
-						<!-- Connected App credentials -->
-						<connectedAppClientId>${anypoint.connected.app.client.id}</connectedAppClientId>
-						<connectedAppClientSecret>${anypoint.connected.app.client.secret}</connectedAppClientSecret>
-
-						<!-- Deployment configuration -->
-						<applicationName>${app.name}</applicationName>
-						<environment>${env}</environment>
-						<region>us-east-2</region>
-
-						<!-- CloudHub 2.0 specific -->
-						<replicas>1</replicas>
-						<workerType>MICRO</workerType>
-
-						<!-- Optional but recommended -->
-						<applyLatestRuntimePatch>true</applyLatestRuntimePatch>
-						<monitoringEnabled>true</monitoringEnabled>
-						<loggingEnabled>true</loggingEnabled>
-
-						<!-- Secure Properties -->
-						<properties>
-							<secure.key>${decryption.key}</secure.key>
-						</properties>
-					</cloudHub2Deployment>
-
 					<classifier>mule-application</classifier>
+					<cloudhub2Deployment>
+						<uri>https://anypoint.mulesoft.com</uri>
+						<provider>MC</provider>
+						<environment>${env}</environment>
+						<target>${region}</target>
+						<server>${serverId}</server> <!-- this is where our credentials will be stored -->
+						<applicationName>${project.artifactId}</applicationName>
+						<releaseChannel>${releaseChannel}</releaseChannel>
+						<replicas>1</replicas>
+						<vCores>0.1</vCores>
+						<deploymentSettings>
+							<generateDefaultPublicUrl>true</generateDefaultPublicUrl>
+						</deploymentSettings>
+						<!-- Start: SECURED PROPERTIES CI/CD -->
+						<secureProperties>
+							<secure.key>${decryption.key}</secure.key> <!-- this comes from the build.yml / github secrets -->
+						</secureProperties>
+						<!-- End: SECURED PROPERTIES CI/CD -->
+
+						<!-- use `properties` for non-secured values -->
+						<!-- <properties> <env>dev</env> </properties> -->
+
+					</cloudhub2Deployment>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -137,6 +133,14 @@
 			<url>https://repository.mulesoft.org/releases/</url>
 			<layout>default</layout>
 		</repository>
+		<!-- START: needed for ch2 deployment -->
+		<repository>
+			<id>${serverId}</id>
+			<name>Private Exchange repository</name>
+			<url>https://maven.anypoint.mulesoft.com/api/v3/organizations/${project.groupId}/maven</url>
+			<layout>default</layout>
+		</repository>
+		<!-- END: needed for ch2 deployment -->
 	</repositories>
 
 	<pluginRepositories>
@@ -150,5 +154,16 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+
+	<!-- START: needed for ch2 deployment -->
+	<distributionManagement>
+		<repository>
+			<id>${serverId}</id>
+			<name>Corporate Repository</name>
+			<url>https://maven.anypoint.mulesoft.com/api/v3/organizations/${project.groupId}/maven</url>
+			<layout>default</layout>
+		</repository>
+	</distributionManagement>
+	<!-- END: needed for ch2 deployment -->
 
 </project>
