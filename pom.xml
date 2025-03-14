@@ -66,14 +66,6 @@
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<coverage>
-						<runCoverage>true</runCoverage>
-						<formats>
-							<format>html</format>
-						</formats>
-					</coverage>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
