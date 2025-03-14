@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.mycompany</groupId>
@@ -33,23 +35,34 @@
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<cloudHubDeployment>
+					<cloudHub2Deployment>
 						<uri>https://anypoint.mulesoft.com</uri>
 						<muleVersion>${app.runtime}</muleVersion>
-						<username>${anypoint.username}</username>
-						<password>${anypoint.password}</password>
+
+						<!-- Connected App credentials -->
+						<connectedAppClientId>${anypoint.connected.app.client.id}</connectedAppClientId>
+						<connectedAppClientSecret>${anypoint.connected.app.client.secret}</connectedAppClientSecret>
+
+						<!-- Deployment configuration -->
 						<applicationName>${app.name}</applicationName>
 						<environment>${env}</environment>
-						<workerType>MICRO</workerType>
 						<region>us-east-2</region>
-						<workers>1</workers>
-						<objectStoreV2>true</objectStoreV2>
-						<!-- Start: SECURED PROPERTIES CI/CD -->
+
+						<!-- CloudHub 2.0 specific -->
+						<replicas>1</replicas>
+						<workerType>MICRO</workerType>
+
+						<!-- Optional but recommended -->
+						<applyLatestRuntimePatch>true</applyLatestRuntimePatch>
+						<monitoringEnabled>true</monitoringEnabled>
+						<loggingEnabled>true</loggingEnabled>
+
+						<!-- Secure Properties -->
 						<properties>
 							<secure.key>${decryption.key}</secure.key>
 						</properties>
-						<!-- End: SECURED PROPERTIES CI/CD -->
-					</cloudHubDeployment>
+					</cloudHub2Deployment>
+
 					<classifier>mule-application</classifier>
 				</configuration>
 			</plugin>
