@@ -5,10 +5,19 @@
 - [Blog post + video] [Part 3: CI/CD pipeline with MuleSoft and GitHub Actions - MUnit testing](https://www.prostdev.com/post/part-3-ci-cd-pipeline-with-mulesoft-and-github-actions-munit-testing)
 - [Blog post + video] [Part 4: CI/CD pipeline with MuleSoft and GitHub Actions - MUnit minimum coverage percentage](https://www.prostdev.com/post/part-4-ci-cd-pipeline-with-mulesoft-and-github-actions-munit-minimum-coverage-percentage)
 - [Blog post + video] [Part 5: CI/CD pipeline with MuleSoft and GitHub Actions - Enabling MFA through a Connected App](https://www.prostdev.com/post/part-5-ci-cd-pipeline-with-mulesoft-and-github-actions-enabling-mfa-through-a-connected-app)
+- [Blog post + video] [Part 6: CI/CD pipeline with MuleSoft and GitHub Actions - Deploying to CloudHub 2.0](https://www.prostdev.com/post/part-6-ci-cd-pipeline-with-mulesoft-and-github-actions-deploying-to-cloudhub-2-0)
 
 > **Note**
 > 
 > This is a simple Mule application to test. Please update the `app.name` and `env` properties from the `pom.xml` to your own.
+
+## Similar repos
+
+[![](https://github-readme-stats.vercel.app/api/pin/?username=alexandramartinez&repo=squirrel-app&theme=catppuccin_latte)](https://github.com/alexandramartinez/squirrel-app)
+[![](https://github-readme-stats.vercel.app/api/pin/?username=alexandramartinez&repo=mulesoft-mfa-cicd&theme=catppuccin_latte)](https://github.com/alexandramartinez/mulesoft-mfa-cicd)
+[![](https://github-readme-stats.vercel.app/api/pin/?username=alexandramartinez&repo=api-catalog-cli-example&theme=catppuccin_latte)](https://github.com/alexandramartinez/api-catalog-cli-example)
+[![](https://github-readme-stats.vercel.app/api/pin/?username=alexandramartinez&repo=mule-bat-example&theme=catppuccin_latte)](https://github.com/alexandramartinez/mule-bat-example)
+[![](https://github-readme-stats.vercel.app/api/pin/?username=alexandramartinez&repo=dataweave-utilities-library&theme=catppuccin_latte)](https://github.com/alexandramartinez/dataweave-utilities-library)
 
 ## Branches
 
