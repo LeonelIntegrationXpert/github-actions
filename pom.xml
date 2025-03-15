@@ -14,7 +14,7 @@
 		<mule.maven.plugin.version>4.1.1</mule.maven.plugin.version>
 		<!-- use at least v4.1.0 -->
 		<env>Sandbox</env>
-		<releaseChannel>NONE</releaseChannel>
+		<releaseChannel>LTS</releaseChannel>
 		<!-- use `NONE` for Mule Runtime 4.4 or `LTS`/`EDGE` for 4.6+ -->
 		<region>Cloudhub-US-East-2</region>
 		<!-- make sure it's one of these Target Names: https://docs.mulesoft.com/cloudhub-2/ch2-architecture#regions-and-dns-records -->
