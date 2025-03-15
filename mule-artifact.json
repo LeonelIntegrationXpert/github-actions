@@ -1,12 +1,11 @@
 {
-  "minMuleVersion": "4.4.0",
-  "secureProperties": [],
-  "classLoaderModelLoaderDescriptor": {
-    "id": "mule",
-    "attributes": {
-      "exportedResources": [],
-      "exportedPackages": [],
-      "requiredProduct": "MULE"
-    }
-  }
+	"minMuleVersion": "4.6.14",
+	"classLoaderModelLoaderDescriptor": {
+		"id": "mule",
+		"attributes": {
+			"exportedResources": [],
+			"exportedPackages": [],
+			"requiredProduct": "MULE"
+		}
+	}
 }

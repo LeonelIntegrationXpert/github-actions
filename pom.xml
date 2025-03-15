@@ -4,7 +4,7 @@
 	<groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
 	<!-- make sure to add your business group ID here -->
 	<artifactId>github-actions</artifactId>
-	<version>1.0.11</version>
+	<version>1.0.12</version>
 	<!-- this has to change EVERY TIME you want to re-deploy -->
 	<packaging>mule-application</packaging>
 	<name>github-actions</name>
@@ -22,6 +22,7 @@
 		<serverId>Repository</serverId>
 		<!-- can be whatever you want, just make sure it matches the settings.xml -->
 		<munit.version>3.2.1</munit.version>
+		<app.runtime>4.6.14</app.runtime>
 	</properties>
 
 	<build>
@@ -46,6 +47,7 @@
 						<server>${serverId}</server>
 						<!-- this is where our credentials will be stored -->
 						<applicationName>${project.artifactId}</applicationName>
+						 <muleVersion>${app.runtime}</muleVersion>
 						<releaseChannel>${releaseChannel}</releaseChannel>
 						<replicas>1</replicas>
 						<vCores>0.1</vCores>
