@@ -11,7 +11,7 @@
  Descrição:
   - Configuração do projeto MuleSoft com implantação automatizada no CloudHub.
   - Inclui configuração do plugin Mule Maven, testes com MUnit e cobertura de código.
-  - Propriedades centralizadas para fácil manutenção e atualização.
+  - Padrão de nomes e tags para Visualizer.
 ==========================================================================
  Documentação oficial MuleSoft:
  https://docs.mulesoft.com/mule-runtime/4.4/
@@ -29,7 +29,7 @@
     -->
     <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
     <artifactId>github-actions</artifactId>
-    <version>1.0.15</version>
+    <version>1.0.16</version>
     <packaging>mule-application</packaging>
     <name>github-actions</name>
 
@@ -44,9 +44,48 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>8</java.version>
 
-        <!-- ================================================== -->
-        <!-- = 2. MULE RUNTIME / CHANNEL                      = -->
-        <!-- ================================================== -->
+	    <!-- ================================================== -->
+	    <!-- = 2. MULE RUNTIME / CHANNEL                      = -->
+	    <!-- ================================================== -->
+	
+	    <!-- 
+	        releaseChannel: define o canal de liberação do runtime Mule.
+	        
+	        Existem dois principais tipos de releaseChannel disponíveis:
+	        
+	        1. LTS  (Long Term Support)
+	           - Indicado para ambientes de Produção, com suporte estendido.
+	           - Estável, com menor frequência de atualizações.
+	           - Recomendado para APIs críticas, que exigem robustez e manutenção de longo prazo.
+	           - Exemplos de versões LTS:
+	               - 4.4.x
+	               - 4.6.x
+	               - 4.8.x
+	               - 4.10.x
+	           
+	        2. Early Access (EA)
+	           - Versões recentes, com novos recursos, mas de menor estabilidade.
+	           - Recomendado apenas para ambientes de Desenvolvimento ou Prototipação.
+	           - Uso NÃO recomendado para ambientes de Produção.
+	           - Exemplos de versões EA:
+	               - 4.5.x
+	               - 4.7.x
+	               - 4.9.x
+	               - 4.11.x
+	        
+	        ATENÇÃO:
+	        - Sempre alinhar a versão do runtime com o releaseChannel correspondente.
+	        - Se usar LTS, escolha uma versão LTS. Exemplo:
+	            <app.runtime>4.6.14</app.runtime>
+	            <releaseChannel>LTS</releaseChannel>
+	        - Se usar EA, escolha uma versão EA. Exemplo:
+	            <app.runtime>4.9.0</app.runtime>
+	            <releaseChannel>EA</releaseChannel>
+	        
+	        Referência Oficial MuleSoft:
+	        https://help.mulesoft.com/s/article/MuleSoft-Support-Lifecycle
+	
+	    -->
         <app.runtime>4.6.14</app.runtime>
         <releaseChannel>LTS</releaseChannel>
 
@@ -86,14 +125,31 @@
         <coverage.runCoverage>true</coverage.runCoverage>
         <coverage.failBuild>true</coverage.failBuild>
         <coverage.requiredCoverage>90</coverage.requiredCoverage>
-        <!-- Para múltiplos formatos, podemos definir separadamente -->
         <coverage.format.console>console</coverage.format.console>
         <coverage.format.sonar>sonar</coverage.format.sonar>
         <coverage.format.json>json</coverage.format.json>
         <coverage.format.html>html</coverage.format.html>
 
         <!-- ================================================== -->
-        <!-- = 8. URLS / REPOSITÓRIOS                         = -->
+        <!-- = 8. PADRÃO DE NOME PARA A APLICAÇÃO NO CLOUDHUB  = -->
+        <!-- ================================================== -->
+        <!-- Exemplo de 'layer' (api, process, system, etc.) -->
+        <app.layer>api</app.layer>
+        <!-- Concatena: layer-artifactId-version-env -->
+        <app.namingPattern>${app.layer}-${project.artifactId}-${project.version}-${env}</app.namingPattern>
+
+        <!-- ================================================== -->
+        <!-- = 9. VISUALIZER TAGS                             = -->
+        <!-- ================================================== -->
+        <!-- 
+          Tags que serão exibidas no Visualizer. 
+          Podem ser múltiplos valores separados por vírgula: 
+          ex.: "financeiro, v1, leonel-team"
+        -->
+        <visualizer.tags>demonstracao, leonel, api-layer</visualizer.tags>
+
+        <!-- ================================================== -->
+        <!-- = 10. URLS / REPOSITÓRIOS                        = -->
         <!-- ================================================== -->
         <serverId>Repository</serverId>
         <anypoint.platform.url>https://anypoint.mulesoft.com</anypoint.platform.url>
@@ -104,12 +160,12 @@
         <private.exchange.url>${base.maven.anypoint.url}/organizations/${project.groupId}/maven</private.exchange.url>
 
         <!-- ================================================== -->
-        <!-- = 9. CHAVE / OUTROS VALORES                       = -->
+        <!-- = 11. CHAVE / OUTROS VALORES                      = -->
         <!-- ================================================== -->
         <key>Chave descript aqui...</key>
 
         <!-- ================================================== -->
-        <!-- = 10. LAYOUTS DE REPOSITÓRIO                      = -->
+        <!-- = 12. LAYOUTS DE REPOSITÓRIO                      = -->
         <!-- ================================================== -->
         <mulesoft-releases.layout>default</mulesoft-releases.layout>
         <anypoint-exchange-v3.layout>default</anypoint-exchange-v3.layout>
@@ -152,8 +208,10 @@
                         <target>${region}</target>
                         <server>${serverId}</server>
                         
-                        <!-- Nome do App e versão do Mule -->
-                        <applicationName>${project.artifactId}</applicationName>
+                        <!-- Aqui usamos o padrão 'layer-nomedoprojeto-versão-env' -->
+                        <applicationName>${app.namingPattern}</applicationName>
+
+                        <!-- Versão do Mule e release channel -->
                         <muleVersion>${app.runtime}</muleVersion>
                         <releaseChannel>${releaseChannel}</releaseChannel>
 
@@ -172,11 +230,18 @@
                             <key>${key}</key>
                         </secureProperties>
 
-                        <!-- Propriedades expostas na aplicação (CloudHub) -->
+                        <!-- 
+                            Propriedades expostas na aplicação (CloudHub).
+                            Incluímos a do Visualizer 'anypoint.platform.visualizer.tags'
+                            para que o Anypoint Visualizer leia automaticamente.
+                        -->
                         <properties>
                             <env>${env}</env>
                             <api.id>${api.id}</api.id>
                             <api.version>${api.version}</api.version>
+
+                            <!-- Propriedade especial para Visualizer: -->
+                            <anypoint.platform.visualizer.tags>${visualizer.tags}</anypoint.platform.visualizer.tags>
                         </properties>
                     </cloudhub2Deployment>
                 </configuration>
