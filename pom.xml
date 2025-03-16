@@ -106,7 +106,7 @@
         <!-- ================================================== -->
         <!-- = 5. ENV / CLOUDHUB CONFIG                       = -->
         <!-- ================================================== -->
-        <env>Sandbox</env>
+        <env>sandbox</env>
         <region>Cloudhub-US-East-2</region>
         <cloudhub.vcores>0.1</cloudhub.vcores>
         <cloudhub.replicas>1</cloudhub.replicas>
@@ -178,6 +178,8 @@
     <!-- = (Plugins de limpeza, deploy no CloudHub, MUnit etc.)   = -->
     <!-- ========================================================= -->
     <build>
+        <finalName>${app.namingPattern}</finalName>
+    
         <plugins>
             <!--
                 Plugin de limpeza do projeto: faz limpeza das pastas target.
