@@ -29,7 +29,7 @@
     -->
     <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
     <artifactId>github-actions</artifactId>
-    <version>1.0.14</version>
+    <version>1.0.15</version>
     <packaging>mule-application</packaging>
     <name>github-actions</name>
 
@@ -175,8 +175,8 @@
                         <!-- Propriedades expostas na aplicação (CloudHub) -->
                         <properties>
                             <env>${env}</env>
-                            <apiId>${api.id}</apiId>
-                            <apiVersion>${api.version}</apiVersion>
+                            <api.id>${api.id}</api.id>
+                            <api.version>${api.version}</api.version>
                         </properties>
                     </cloudhub2Deployment>
                 </configuration>
