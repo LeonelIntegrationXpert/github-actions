@@ -225,6 +225,12 @@
                         <!-- Configurações adicionais de deployment -->
                         <deploymentSettings>
                             <generateDefaultPublicUrl>${generateDefaultPublicUrl}</generateDefaultPublicUrl>
+                            <updateStrategy>rolling</updateStrategy>
+
+                            <lastMileSecurity>disabled</lastMileSecurity>
+                            <forwardSslSession>disabled</forwardSslSession>
+                            <disableAmLogForwarding>enabled</disableAmLogForwarding>
+                            <clustered>disabled</clustered>
                         </deploymentSettings>
 
                         <!-- Propriedades seguras (exemplo) -->
