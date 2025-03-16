@@ -149,16 +149,10 @@
 
 	<pluginRepositories>
 		<pluginRepository>
-			<id>anypoint-exchange-v3</id>
-			<name>Anypoint Exchange</name>
-			<url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
-			<layout>default</layout>
-		</pluginRepository>
-		<pluginRepository>
 			<id>mulesoft-releases</id>
 			<name>MuleSoft Releases Repository</name>
-			<url>https://repository.mulesoft.org/releases/</url>
 			<layout>default</layout>
+			<url>https://repository.mulesoft.org/releases/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
