@@ -44,55 +44,49 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>8</java.version>
 
-	    <!-- ================================================== -->
-	    <!-- = 2. MULE RUNTIME / CHANNEL                      = -->
-	    <!-- ================================================== -->
-	
-	    <!-- 
-	        releaseChannel: define o canal de liberação do runtime Mule.
-	        
-	        Existem dois principais tipos de releaseChannel disponíveis:
-	        
-	        1. LTS  (Long Term Support)
-	           - Indicado para ambientes de Produção, com suporte estendido.
-	           - Estável, com menor frequência de atualizações.
-	           - Recomendado para APIs críticas, que exigem robustez e manutenção de longo prazo.
-	           - Exemplos de versões LTS:
-	               - 4.4.x
-	               - 4.6.x
-	               - 4.8.x
-	               - 4.10.x
-	           
-	        2. Early Access (EA)
-	           - Versões recentes, com novos recursos, mas de menor estabilidade.
-	           - Recomendado apenas para ambientes de Desenvolvimento ou Prototipação.
-	           - Uso NÃO recomendado para ambientes de Produção.
-	           - Exemplos de versões EA:
-	               - 4.5.x
-	               - 4.7.x
-	               - 4.9.x
-	               - 4.11.x
-	        
-	        ATENÇÃO:
-	        - Sempre alinhar a versão do runtime com o releaseChannel correspondente.
-	        - Se usar LTS, escolha uma versão LTS. Exemplo:
-	            <app.runtime>4.6.14</app.runtime>
-	            <releaseChannel>LTS</releaseChannel>
-	        - Se usar EA, escolha uma versão EA. Exemplo:
-	            <app.runtime>4.9.0</app.runtime>
-	            <releaseChannel>EA</releaseChannel>
-	        
-	        Referência Oficial MuleSoft:
-	        https://help.mulesoft.com/s/article/MuleSoft-Support-Lifecycle
-	
-	    -->
+        <!-- ================================================== -->
+        <!-- = 2. MULE RUNTIME / CHANNEL                      = -->
+        <!-- ================================================== -->
+        <!-- 
+            releaseChannel: define o canal de liberação do runtime Mule.
+            
+            Existem dois principais tipos de releaseChannel disponíveis:
+            
+            1. LTS (Long Term Support)
+               - Indicado para ambientes de Produção, com suporte estendido.
+               - Estável, com menor frequência de atualizações.
+               - Recomendado para APIs críticas, que exigem robustez 
+                 e manutenção de longo prazo.
+               - Exemplos: 4.4.x, 4.6.x, 4.8.x, 4.10.x
+               
+            2. Early Access (EA)
+               - Versões recentes, com novos recursos, mas menor estabilidade.
+               - Recomendado apenas para Dev ou Prototipação.
+               - Uso NÃO recomendado para Produção.
+               - Exemplos: 4.5.x, 4.7.x, 4.9.x, 4.11.x
+            
+            ATENÇÃO:
+            - Sempre alinhar a versão do runtime (<app.runtime>) com 
+              o releaseChannel correspondente.
+            - Exemplos de configurações típicas:
+                <app.runtime>4.6.14</app.runtime>
+                <releaseChannel>LTS</releaseChannel>
+
+                ou
+
+                <app.runtime>4.9.0</app.runtime>
+                <releaseChannel>EA</releaseChannel>
+            
+            Referência Oficial MuleSoft:
+            https://help.mulesoft.com/s/article/MuleSoft-Support-Lifecycle
+        -->
         <app.runtime>4.6.14</app.runtime>
         <releaseChannel>LTS</releaseChannel>
 
         <!-- ================================================== -->
         <!-- = 3. VERSÕES DE PLUGINS (MULE / MUNIT / CLEAN)    = -->
         <!-- ================================================== -->
-        <mule.maven.plugin.version>4.1.1</mule.maven.plugin.version>
+        <mule.maven.plugin.version>4.4.0</mule.maven.plugin.version>
         <munit.version>3.2.1</munit.version>
         <assertions.version>1.0.2</assertions.version>
         <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
@@ -142,9 +136,9 @@
         <!-- = 9. VISUALIZER TAGS                             = -->
         <!-- ================================================== -->
         <!-- 
-          Tags que serão exibidas no Visualizer. 
-          Podem ser múltiplos valores separados por vírgula: 
-          ex.: "financeiro, v1, leonel-team"
+            Tags que serão exibidas no Visualizer. 
+            Podem ser múltiplos valores separados por vírgula. Exemplo:
+            "financeiro, v1, leonel-team"
         -->
         <visualizer.tags>demonstracao, leonel, api-layer</visualizer.tags>
 
@@ -178,6 +172,7 @@
     <!-- = (Plugins de limpeza, deploy no CloudHub, MUnit etc.)   = -->
     <!-- ========================================================= -->
     <build>
+        <!-- Nome final do artefato que será gerado no target -->
         <finalName>${app.namingPattern}</finalName>
     
         <plugins>
@@ -192,7 +187,7 @@
             </plugin>
 
             <!--
-                Mule Maven Plugin: responsável por build e deploy no CloudHub.
+                Mule Maven Plugin: responsável por build e deploy no CloudHub 2.0.
                 https://docs.mulesoft.com/mule-runtime/latest/mule-maven-plugin
             -->
             <plugin>
@@ -201,54 +196,68 @@
                 <version>${mule.maven.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
+                    <!-- 'classifier' default para aplicações Mule -->
                     <classifier>mule-application</classifier>
+
+                    <!-- Configuração específica para CloudHub 2.0 -->
                     <cloudhub2Deployment>
-                        <!-- URL e credenciais/servidor -->
+                        <!-- Credenciais e destino do deploy -->
                         <uri>${anypoint.platform.url}</uri>
                         <provider>${provider}</provider>
                         <environment>${env}</environment>
                         <target>${region}</target>
                         <server>${serverId}</server>
                         
-                        <!-- Aqui usamos o padrão 'layer-nomedoprojeto-versão-env' -->
+                        <!-- Nome da aplicação no padrão 'layer-nomedoprojeto' -->
                         <applicationName>${app.namingPattern}</applicationName>
 
-                        <!-- Versão do Mule e release channel -->
+                        <!-- Versão do Mule + canal de release (LTS / EA) -->
                         <muleVersion>${app.runtime}</muleVersion>
                         <releaseChannel>${releaseChannel}</releaseChannel>
 
-                        <!-- Configurações de escala -->
+                        <!-- Configurações de escala e Java -->
                         <replicas>${cloudhub.replicas}</replicas>
                         <vCores>${cloudhub.vcores}</vCores>
                         <javaVersion>${java.version}</javaVersion>
 
                         <!-- Configurações adicionais de deployment -->
                         <deploymentSettings>
+                            <!-- Gera URL pública automaticamente (opcional) -->
                             <generateDefaultPublicUrl>${generateDefaultPublicUrl}</generateDefaultPublicUrl>
+
+                            <!-- Exemplo de estratégia de update: rolling ou recreate -->
                             <updateStrategy>rolling</updateStrategy>
 
+                            <!-- Exemplos de funcionalidades desabilitadas -->
                             <lastMileSecurity>disabled</lastMileSecurity>
                             <forwardSslSession>disabled</forwardSslSession>
                             <disableAmLogForwarding>enabled</disableAmLogForwarding>
                             <clustered>disabled</clustered>
                         </deploymentSettings>
+                        
+                        <!-- Serviços integrados (Object Store V2, Secrets Manager etc.) -->
+                        <integrations>
+                          <services>
+                            <objectStoreV2>
+                              <enabled>true</enabled>
+                            </objectStoreV2>
+                          </services>
+                        </integrations>
 
-                        <!-- Propriedades seguras (exemplo) -->
+                        <!-- Propriedades seguras (exemplo de chave) -->
                         <secureProperties>
                             <key>${key}</key>
                         </secureProperties>
 
                         <!-- 
-                            Propriedades expostas na aplicação (CloudHub).
-                            Incluímos a do Visualizer 'anypoint.platform.visualizer.tags'
-                            para que o Anypoint Visualizer leia automaticamente.
+                            Propriedades expostas na aplicação (CloudHub),
+                            incluindo Visualizer: anypoint.platform.visualizer.tags
+                            para detecção automática no Anypoint Visualizer.
                         -->
                         <properties>
                             <env>${env}</env>
                             <api.id>${api.id}</api.id>
                             <api.version>${api.version}</api.version>
-
-                            <!-- Propriedade especial para Visualizer: -->
                             <anypoint.platform.visualizer.tags>${visualizer.tags}</anypoint.platform.visualizer.tags>
                         </properties>
                     </cloudhub2Deployment>
@@ -265,6 +274,7 @@
                 <version>${munit.version}</version>
                 <executions>
                     <execution>
+                        <!-- Gera testes e relatório de cobertura na fase 'test' -->
                         <id>test</id>
                         <phase>test</phase>
                         <goals>
@@ -275,9 +285,12 @@
                 </executions>
                 <configuration>
                     <coverage>
+                        <!-- Controla se deve rodar cobertura -->
                         <runCoverage>${coverage.runCoverage}</runCoverage>
+                        <!-- Se falhar ao não atingir o % mínimo, falha build -->
                         <failBuild>${coverage.failBuild}</failBuild>
                         <requiredApplicationCoverage>${coverage.requiredCoverage}</requiredApplicationCoverage>
+                        <!-- Formatos de saída do relatório de cobertura -->
                         <formats>
                             <format>${coverage.format.console}</format>
                             <format>${coverage.format.sonar}</format>
@@ -329,7 +342,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Conector de Sockets -->
+        <!-- Conector de Sockets (opcional) -->
         <dependency>
             <groupId>org.mule.connectors</groupId>
             <artifactId>mule-sockets-connector</artifactId>
@@ -366,6 +379,7 @@
             <url>${anypoint.exchange.v3.url}</url>
             <layout>${anypoint-exchange-v3.layout}</layout>
         </repository>
+
         <!-- Repositório de releases da MuleSoft -->
         <repository>
             <id>mulesoft-releases</id>
@@ -373,6 +387,7 @@
             <url>https://repository.mulesoft.org/releases/</url>
             <layout>${mulesoft-releases.layout}</layout>
         </repository>
+
         <!-- Repositório privado / personalizado -->
         <repository>
             <id>${serverId}</id>
