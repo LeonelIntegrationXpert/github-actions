@@ -1,43 +1,101 @@
-# GitHub actions CI/CD pipeline for MuleSoft
+# GitHub Actions - MuleSoft Integration
 
-- [Blog post + video] [Part 1: How to set up a CI/CD pipeline to deploy your MuleSoft apps to CloudHub using GitHub Actions](https://www.prostdev.com/post/how-to-set-up-a-ci-cd-pipeline-to-deploy-your-mulesoft-apps-to-cloudhub-using-github-actions)
-- [Blog post + video] [Part 2: CI/CD pipeline with MuleSoft and GitHub Actions - secured/encrypted properties](https://www.prostdev.com/post/part-2-ci-cd-pipeline-with-mulesoft-and-github-actions-secured-encrypted-properties)
-- [Blog post + video] [Part 3: CI/CD pipeline with MuleSoft and GitHub Actions - MUnit testing](https://www.prostdev.com/post/part-3-ci-cd-pipeline-with-mulesoft-and-github-actions-munit-testing)
-- [Blog post + video] [Part 4: CI/CD pipeline with MuleSoft and GitHub Actions - MUnit minimum coverage percentage](https://www.prostdev.com/post/part-4-ci-cd-pipeline-with-mulesoft-and-github-actions-munit-minimum-coverage-percentage)
-- [Blog post + video] [Part 5: CI/CD pipeline with MuleSoft and GitHub Actions - Enabling MFA through a Connected App](https://www.prostdev.com/post/part-5-ci-cd-pipeline-with-mulesoft-and-github-actions-enabling-mfa-through-a-connected-app)
-- [Blog post + video] [Part 6: CI/CD pipeline with MuleSoft and GitHub Actions - Deploying to CloudHub 2.0](https://www.prostdev.com/post/part-6-ci-cd-pipeline-with-mulesoft-and-github-actions-deploying-to-cloudhub-2-0)
+## 🚀 Descrição do Projeto
 
-> **Note**
-> 
-> This is a simple Mule application to test. Please update the `app.name` and `env` properties from the `pom.xml` to your own.
+Este projeto é uma aplicação MuleSoft projetada para demonstrações e validação da integração com GitHub Actions. Seu objetivo principal é permitir automação e execução eficiente de fluxos MuleSoft com rastreabilidade detalhada por meio de logs configurados com Log4j.
 
-## Similar repos
+## 🔧 Tecnologias Utilizadas
 
-[![](https://github-readme-stats.vercel.app/api/pin/?username=alexandramartinez&repo=squirrel-app&theme=catppuccin_latte)](https://github.com/alexandramartinez/squirrel-app)
-[![](https://github-readme-stats.vercel.app/api/pin/?username=alexandramartinez&repo=mulesoft-mfa-cicd&theme=catppuccin_latte)](https://github.com/alexandramartinez/mulesoft-mfa-cicd)
-[![](https://github-readme-stats.vercel.app/api/pin/?username=alexandramartinez&repo=api-catalog-cli-example&theme=catppuccin_latte)](https://github.com/alexandramartinez/api-catalog-cli-example)
-[![](https://github-readme-stats.vercel.app/api/pin/?username=alexandramartinez&repo=mule-bat-example&theme=catppuccin_latte)](https://github.com/alexandramartinez/mule-bat-example)
-[![](https://github-readme-stats.vercel.app/api/pin/?username=alexandramartinez&repo=dataweave-utilities-library&theme=catppuccin_latte)](https://github.com/alexandramartinez/dataweave-utilities-library)
+- **MuleSoft Runtime 4.6.14**
+- **HTTP Listener** para expor endpoints REST
+- **Log4j 2** para logs detalhados e estruturados
+- **MUnit** para testes automatizados
+- **GitHub Actions** para automação e deploy contínuo
 
-## Branches
+## 🛠️ Configuração Inicial
 
-Different examples are being demonstrated per branch. Here's the summary of each.
+### 📥 Pré-requisitos
 
-||[`main`](https://github.com/alexandramartinez/github-actions/tree/main)|[`connected-app`](https://github.com/alexandramartinez/github-actions/tree/connected-app)|[`cloudhub2`](https://github.com/alexandramartinez/github-actions/tree/cloudhub2)
-|-|-|-|-
-|Deployment|CH1|CH1|CH2
-|Passing secured properties|✅|✅|✅
-|MUnit testing in pipeline|✅|✅|❌
-|Running MUnit coverage|✅|✅|❌
-|Nexus credentials|✅|✅|❌
-|Auth|username/password in `pom.xml`|connected app in `pom.xml`|server in `settings.xml` (using connected app)
-|Maven version|`3.8.0`|`3.8.0`|`4.1.1`
-|Runtime|`4.4.0` through the `muleVersion` property|`4.4.0` through the `muleVersion` property|`4.4.0` through the `releaseChannel` property (`NONE`)
+- Anypoint Studio 7.x
+- Mule Runtime 4.6.14
+- Java JDK 11 ou superior
 
-## Other resources
+### 📦 Instalação
 
-The initial versions of the pipeline are based on the following repository created by Archana Patel: [arch-jn/github-actions-mule-cicd-demo](https://github.com/arch-jn/github-actions-mule-cicd-demo).
+1. Clone o repositório:
 
-- [Docs] [Deploy Applications to CloudHub Using the Mule Maven Plugin](https://docs.mulesoft.com/mule-runtime/latest/deploy-to-cloudhub)
-- [Docs] [Deploy Applications to CloudHub 2.0 Using the Mule Maven Plugin](https://docs.mulesoft.com/mule-runtime/latest/deploy-to-cloudhub-2)
-- [Docs] [CloudHub 2.0 Architecture - Regions and DNS Records](https://docs.mulesoft.com/cloudhub-2/ch2-architecture#regions-and-dns-records)
+```bash
+git clone https://github.com/seu-usuario/github-actions-mulesoft.git
+```
+
+2. Importe o projeto no Anypoint Studio:
+
+- Abra o Anypoint Studio
+- Vá em **File → Import → Anypoint Studio Project from File System**
+- Escolha a pasta clonada e importe o projeto
+
+## ▶️ Executando o Projeto
+
+Para executar localmente:
+
+1. Clique com o botão direito sobre o projeto em Anypoint Studio.
+2. Escolha **Run As → Mule Application**.
+3. O projeto será executado localmente na porta padrão `8081`.
+
+### 🌐 Endpoint disponível
+
+```http
+GET http://localhost:8081/test
+```
+
+### 📤 Resposta esperada
+
+```text
+It worked!
+```
+
+## 🧪 Testes Automatizados com MUnit
+
+Este projeto inclui testes automatizados utilizando o framework **MUnit**.
+
+- Para rodar os testes:
+
+```bash
+mvn clean test
+```
+
+### 📂 Logs dos testes
+
+Logs detalhados serão salvos em:
+
+```
+target/munit-logs/github-actions-munit.log
+```
+
+## 📋 Estrutura do Projeto
+
+```
+.
+├── src
+│   ├── main
+│   │   ├── mule (fluxos principais)
+│   │   └── resources (configuração Log4j, propriedades, etc)
+│   └── test
+│       └── munit (testes automatizados)
+├── pom.xml (dependências e build)
+└── README.md (este documento)
+```
+
+## 📚 Documentação Oficial
+
+- [MuleSoft Runtime Documentation](https://docs.mulesoft.com/mule-runtime/4.6/)
+- [MUnit Documentation](https://docs.mulesoft.com/munit/)
+- [Log4j2 Documentation](https://logging.apache.org/log4j/2.x/manual/)
+
+## 📞 Suporte
+
+Para dúvidas ou suporte técnico entre em contato com:
+
+- **Leonel Dorneles Porto**
+- 📧 [leoneldornelesporto@outlook.com.br](mailto:leoneldornelesporto@outlook.com.br)
+- 📞 **+55 53 99180-4869**

@@ -1,34 +1,86 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Configuration>
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ ==========================================================================
+  MuleSoft Logging Configuration (log4j2.xml)
+ ==========================================================================
+  Project: github-actions
+  Author: Leonel Dorneles Porto
+  Email: leoneldornelesporto@outlook.com.br
+  Phone: +55 53 99180-4869
+ ==========================================================================
+  Descrição:
+    - Configuração profissional para logging em aplicações MuleSoft.
+    - Logs detalhados, direcionados ao console e arquivo com rotação.
+    - Exibe thread, caminho do processador e ID do evento de correlação.
+ ==========================================================================
+  Documentação Oficial:
+    https://docs.mulesoft.com/runtime-manager/viewing-log-data
+ ==========================================================================
+-->
 
-    <!--These are some of the loggers you can enable. 
-        There are several more you can find in the documentation. 
-        Besides this log4j configuration, you can also use Java VM environment variables
-        to enable other logs like network (-Djavax.net.debug=ssl or all) and 
-        Garbage Collector (-XX:+PrintGC). These will be append to the console, so you will 
-        see them in the mule_ee.log file. -->
+<Configuration status="WARN" monitorInterval="60">
 
+    <!-- ======================
+         APPENDERS
+         ====================== -->
     <Appenders>
-        <RollingFile name="file" fileName="${sys:mule.home}${sys:file.separator}logs${sys:file.separator}github-actions.log"
-                 filePattern="${sys:mule.home}${sys:file.separator}logs${sys:file.separator}github-actions-%i.log">
-            <PatternLayout pattern="%-5p %d [%t] [processor: %X{processorPath}; event: %X{correlationId}] %c: %m%n"/>
-            <SizeBasedTriggeringPolicy size="10 MB"/>
+
+        <!-- Console Appender -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5p] [%t] [processor: %X{processorPath}] [event: %X{correlationId}] - %m%n"/>
+        </Console>
+
+        <!-- Rolling File Appender -->
+        <RollingFile name="FileLogger"
+                     fileName="${sys:mule.home}${sys:file.separator}logs${sys:file.separator}github-actions.log"
+                     filePattern="${sys:mule.home}${sys:file.separator}logs${sys:file.separator}github-actions-%d{yyyy-MM-dd}-%i.log.gz">
+
+            <!-- Layout dos logs -->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5p] [%t] [processor: %X{processorPath}] [event: %X{correlationId}] - %m%n"/>
+
+            <!-- Políticas de rotação -->
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+
+            <!-- Máximo de arquivos rotacionados -->
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
+
     </Appenders>
 
+    <!-- ======================
+         LOGGERS
+         ====================== -->
     <Loggers>
-        <!-- Http Logger shows wire traffic on DEBUG -->
-        <!--AsyncLogger name="org.mule.service.http.impl.service.HttpMessageLogger" level="DEBUG"/-->
+
+        <!-- Logs essenciais para deploy/startup/shutdown -->
+        <AsyncLogger name="org.mule.runtime.core.internal.logging" level="INFO"/>
+
+        <!-- Logs HTTP detalhados (wire traffic) -->
+        <!-- <AsyncLogger name="org.mule.service.http.impl.service.HttpMessageLogger" level="DEBUG"/> -->
+
+        <!-- Serviços HTTP MuleSoft -->
         <AsyncLogger name="org.mule.service.http" level="WARN"/>
         <AsyncLogger name="org.mule.extension.http" level="WARN"/>
 
-        <!-- Mule logger -->
+        <!-- Logs de cobertura do MUnit -->
+        <AsyncLogger name="org.mule.munit.plugins.coverage.server" level="INFO"/>
+
+        <!-- Logger padrão do Mule (componente Logger) -->
         <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="INFO"/>
 
+        <!-- Núcleo do MuleSoft -->
+        <AsyncLogger name="org.mule.runtime.core.internal" level="WARN"/>
+        <AsyncLogger name="org.mule.runtime.core.api" level="WARN"/>
+
+        <!-- Logger Raiz -->
         <AsyncRoot level="INFO">
-            <AppenderRef ref="file"/>
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileLogger"/>
         </AsyncRoot>
+
     </Loggers>
 
 </Configuration>

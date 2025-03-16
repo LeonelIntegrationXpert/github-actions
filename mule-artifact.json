@@ -1,11 +1,30 @@
 {
-	"minMuleVersion": "4.6.14",
-	"classLoaderModelLoaderDescriptor": {
-		"id": "mule",
-		"attributes": {
-			"exportedResources": [],
-			"exportedPackages": [],
-			"requiredProduct": "MULE"
-		}
-	}
+  "name": "github-actions",
+  "description": "MuleSoft Application for GitHub Actions Deployment",
+  "minMuleVersion": "4.6.14",
+  "redeploymentEnabled": true,
+
+  "secureProperties": [],
+
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "requiredProduct": "MULE",
+      "exportedPackages": [],
+      "exportedResources": []
+    }
+  },
+
+  "metadata": {
+    "author": "Leonel Dorneles Porto",
+    "email": "leoneldornelesporto@outlook.com.br",
+    "phone": "+55 53 99180-4869",
+    "comments": [
+      "Configuração do artefato MuleSoft para o projeto 'github-actions'.",
+      "Indica a versão mínima do Mule Runtime exigida para rodar esta aplicação.",
+      "Permite que a aplicação seja redeployada automaticamente.",
+      "secureProperties pode ser configurado com chaves protegidas (se necessário).",
+      "O descritor classLoaderModelLoaderDescriptor define como os recursos serão carregados no classloader da aplicação."
+    ]
+  }
 }

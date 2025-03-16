@@ -1,4 +1,50 @@
 <?xml version='1.0' encoding='UTF-8'?>
+<!--
+==========================================================================
+ MuleSoft Application Types Configuration (application-types.xml)
+==========================================================================
+ Projeto: github-actions
+ Autor: Leonel Dorneles Porto
+ Email: leoneldornelesporto@outlook.com.br
+ Telefone: +55 53 99180-4869
+==========================================================================
+ Descrição:
+  - Este arquivo define tipos personalizados utilizados na aplicação Mule.
+  - Utilize este catálogo para definir DataTypes reutilizáveis e facilitar
+    validações e conversões automáticas entre formatos de dados.
+  - Exemplo de uso: definição de estruturas JSON, XML ou CSV.
+==========================================================================
+ Documentação oficial sobre tipos personalizados (DataType):
+ https://docs.mulesoft.com/mule-runtime/4.4/dataweave-types
+==========================================================================
+-->
+
 <types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
-  <types:catalog/>
+  
+  <!-- Catálogo de tipos personalizados -->
+  <types:catalog>
+    
+    <!-- Exemplo de definição de um tipo JSON personalizado -->
+    <!-- 
+    <types:type name="CustomJsonType" doc:id="json-001">
+      <types:json schemaLocation="schemas/custom-schema.json"/>
+    </types:type>
+    -->
+
+    <!-- Exemplo de definição de um tipo XML personalizado -->
+    <!-- 
+    <types:type name="CustomXmlType" doc:id="xml-001">
+      <types:xml schemaLocation="schemas/custom-schema.xsd"/>
+    </types:type>
+    -->
+
+    <!-- Exemplo de definição de um tipo CSV personalizado -->
+    <!-- 
+    <types:type name="CustomCsvType" doc:id="csv-001">
+      <types:csv delimiter="," header="true"/>
+    </types:type>
+    -->
+
+  </types:catalog>
+
 </types:mule>

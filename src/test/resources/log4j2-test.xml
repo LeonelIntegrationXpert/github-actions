@@ -1,31 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration>
+<!--
+ ==========================================================================
+  MuleSoft MUnit Logging Configuration (log4j2.xml)
+ ==========================================================================
+  Projeto: github-actions (MUnit)
+  Autor: Leonel Dorneles Porto
+  Email: leoneldornelesporto@outlook.com.br
+  Telefone: +55 53 99180-4869
+ ==========================================================================
+  Descrição:
+    - Configuração profissional para logging específico de testes MUnit.
+    - Exibição clara dos logs para diagnóstico rápido em testes unitários.
+    - Logs direcionados para console e arquivos, com rotação automática.
+    - Exibe processador e evento de correlação detalhados nos arquivos.
+ ==========================================================================
+-->
 
+<Configuration status="WARN" monitorInterval="60">
+
+    <!-- ===============================
+         APPENDERS (Saída dos Logs)
+         =============================== -->
     <Appenders>
+
+        <!-- Saída dos logs MUnit no Console -->
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%-5p %d [%t] %c: %m%n"/>
+            <PatternLayout pattern="[MUNIT TEST] %-5p %d{HH:mm:ss.SSS} [%t] %c{1.} - %m%n" />
         </Console>
+
+        <!-- Saída dos logs MUnit em Arquivos com Rotação -->
+        <RollingFile name="TestFileAppender"
+                     fileName="target/munit-logs/github-actions-munit.log"
+                     filePattern="target/munit-logs/github-actions-munit-%i.log">
+
+            <!-- Layout detalhado dos logs -->
+            <PatternLayout pattern="[MUNIT FILE] %-5p %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [processor: %X{processorPath}] [event: %X{correlationId}] %c{1.} - %m%n" />
+
+            <!-- Política de rotação por tamanho -->
+            <SizeBasedTriggeringPolicy size="5 MB" />
+
+            <!-- Manter no máximo 5 arquivos rotacionados -->
+            <DefaultRolloverStrategy max="5" />
+        </RollingFile>
+
     </Appenders>
 
+    <!-- ===============================
+         LOGGERS (Níveis de Logs MUnit)
+         =============================== -->
     <Loggers>
-        <!-- Http Logger shows wire traffic on DEBUG -->
-        <!--AsyncLogger name="org.mule.service.http.impl.service.HttpMessageLogger" level="DEBUG"/-->
-        <AsyncLogger name="org.mule.service.http" level="WARN"/>
-        <AsyncLogger name="org.mule.extension.http" level="WARN"/>
 
-        <!-- Reduce startup noise -->
-        <AsyncLogger name="com.mulesoft.mule.runtime.plugin" level="WARN"/>
-        <AsyncLogger name="org.mule.maven.client" level="WARN"/>
-        <AsyncLogger name="org.mule.runtime.core.internal.util" level="WARN"/>
-        <AsyncLogger name="org.quartz" level="WARN"/>
-        <AsyncLogger name="org.mule.munit.plugins.coverage.server" level="WARN"/>
+        <!-- Logs dos Serviços HTTP MuleSoft (wire traffic) -->
+        <AsyncLogger name="org.mule.service.http" level="WARN" />
+        <AsyncLogger name="org.mule.extension.http" level="WARN" />
 
-        <!-- Mule logger -->
-        <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="INFO"/>
+        <!-- Logs detalhados do componente Logger (para debug dos fluxos) -->
+        <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="DEBUG" />
 
-        <AsyncRoot level="INFO">
-            <AppenderRef ref="Console"/>
+        <!-- Logs relacionados ao MUnit Coverage -->
+        <AsyncLogger name="org.mule.munit.plugins.coverage.server" level="INFO" />
+
+        <!-- Logger Raiz MUnit (Logs gerais dos testes) -->
+        <AsyncRoot level="DEBUG">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="TestFileAppender" />
         </AsyncRoot>
+
     </Loggers>
 
 </Configuration>
