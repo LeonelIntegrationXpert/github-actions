@@ -29,7 +29,7 @@
     -->
     <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
     <artifactId>github-actions</artifactId>
-    <version>1.0.18</version>
+    <version>1.0.19</version>
     <packaging>mule-application</packaging>
     <name>github-actions</name>
 
@@ -106,7 +106,7 @@
         <!-- ================================================== -->
         <!-- = 5. ENV / CLOUDHUB CONFIG                       = -->
         <!-- ================================================== -->
-        <env>sandbox</env>
+        <env>Sandbox</env>
         <region>Cloudhub-US-East-2</region>
         <cloudhub.vcores>0.1</cloudhub.vcores>
         <cloudhub.replicas>1</cloudhub.replicas>
