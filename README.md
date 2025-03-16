@@ -5,11 +5,11 @@
 [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-blue?logo=githubactions)](https://docs.github.com/en/actions)
 [![MUnit Tests](https://img.shields.io/badge/MUnit-Automated%20Tests-9cf?logo=mulesoft)](https://docs.mulesoft.com/munit/)
 
-Bem-vindo(a) ao repositório oficial do projeto **github-actions**. Este projeto demonstra como automatizar *builds* e *deploys* de uma aplicação **MuleSoft** no **CloudHub 2.0**, integrando com **testes MUnit**, **cobertura de código** e pipeline via **GitHub Actions**.
+Bem-vindo(a) ao repositório oficial do projeto **github-actions**! Este projeto demonstra como automatizar *builds* e *deploys* de uma aplicação **MuleSoft** no **CloudHub 2.0**, integrando **testes MUnit**, **cobertura de código** e um pipeline **GitHub Actions** para CI/CD.
 
 ---
 
-## Sumário
+## 🚀 Sumário
 1. [Descrição Geral](#descrição-geral)  
 2. [Arquitetura e Fluxo Principal](#arquitetura-e-fluxo-principal)  
 3. [Pré-Requisitos](#pré-requisitos)  
@@ -24,10 +24,10 @@ Bem-vindo(a) ao repositório oficial do projeto **github-actions**. Este projeto
 
 ---
 
-## Descrição Geral
+## 📄 Descrição Geral
 Este repositório contém uma aplicação **Mule 4** que expõe um endpoint HTTP simples, executa testes com **MUnit** e utiliza um pipeline **GitHub Actions** para publicar artefatos no **Anypoint Exchange** e realizar deploy **automático** no **CloudHub 2.0**.
 
-**Destaques:**
+**Destaques**:
 - **Runtime Mule**: 4.6.14 (canal LTS)  
 - **Estratégia de Deploy**: Rolling Update  
 - **Object Store V2**: Habilitado em CloudHub 2.0  
@@ -35,12 +35,12 @@ Este repositório contém uma aplicação **Mule 4** que expõe um endpoint HTTP
 
 ---
 
-## Arquitetura e Fluxo Principal
+## 🏗️ Arquitetura e Fluxo Principal
 A aplicação expõe um **HTTP Listener** na rota `/test`. Quando acessado, retorna:
 ```
 It worked!
 ```
-Registrando logs para acompanhamento.
+E registra logs para acompanhamento.
 
 ### Exemplo de Fluxo Principal
 ```xml
@@ -51,12 +51,12 @@ Registrando logs para acompanhamento.
 </flow>
 ```
 
-#### Ilustração do Fluxo
-![Fluxo Principal MuleSoft - Exemplo](image.png)
+#### Ilustração do Fluxo Principal
+![Fluxo Principal MuleSoft](.img/1.jpg)
 
 ---
 
-## Pré-Requisitos
+## 📋 Pré-Requisitos
 - **Anypoint Studio 7.x** (ou Maven instalado para rodar via CLI)
 - **Java 8** (Zulu/OpenJDK)  
 - **Mule Runtime 4.6.14** (ou compatível com LTS)  
@@ -64,7 +64,7 @@ Registrando logs para acompanhamento.
 
 ---
 
-## Estrutura do Projeto
+## 📂 Estrutura do Projeto
 
 ```
 ├── src
@@ -89,7 +89,7 @@ Registrando logs para acompanhamento.
 
 ---
 
-## Como Executar Localmente
+## 💻 Como Executar Localmente
 
 1. **Clonar o repositório**:
    ```bash
@@ -98,10 +98,10 @@ Registrando logs para acompanhamento.
    ```
 
 2. **Abrir no Anypoint Studio**:  
-   - Navegue em **File → Import → Anypoint Studio Project from File System**  
+   - Vá em **File → Import → Anypoint Studio Project from File System**  
    - Selecione a pasta do projeto clonado
 
-3. **Rodar via Anypoint Studio**:  
+3. **Executar via Anypoint Studio**:  
    - Clique com o botão direito no projeto → **Run As → Mule Application**  
    - A aplicação subirá na porta `8081`
 
@@ -116,10 +116,10 @@ Registrando logs para acompanhamento.
 
 ---
 
-## Testes Automatizados (MUnit)
+## 🧪 Testes Automatizados (MUnit)
 
-- Este projeto possui **testes MUnit** configurados no arquivo [`github-actions-suite.xml`](https://github.com/LeonelIntegrationXpert/github-actions/blob/main/src/test/munit/github-actions-suite.xml).
-- Para rodar os testes via linha de comando:
+- Os **testes MUnit** estão configurados no arquivo [`github-actions-suite.xml`](https://github.com/LeonelIntegrationXpert/github-actions/blob/main/src/test/munit/github-actions-suite.xml).
+- Para executar via linha de comando:
   ```bash
   mvn clean test
   ```
@@ -128,35 +128,38 @@ Registrando logs para acompanhamento.
   target/munit-reports/
   ```
 
-> **Observação**: Caso o log mostre:
+#### Ilustração do Fluxo de Testes MUnit
+![Fluxo de Testes MUnit](.img/2.jpg)
+
+> **Observação**: Se aparecer:
 > ```
 > [INFO] Run of munit-maven-plugin skipped. Property [skipMunitTests] was set to true
 > ```
-> signfica que a pipeline ou comando Maven está usando `-DskipMunitTests=true`. Remova essa flag para rodar os testes.
+> significa que a pipeline ou o comando Maven está usando `-DskipMunitTests=true`. Remova essa flag para rodar os testes.
 
 ---
 
-## Pipeline GitHub Actions
-No arquivo [`build.yml`](https://github.com/LeonelIntegrationXpert/github-actions/blob/main/.github/workflows/build.yml), há um workflow que:
+## 🔧 Pipeline GitHub Actions
+No arquivo [`build.yml`](https://github.com/LeonelIntegrationXpert/github-actions/blob/main/.github/workflows/build.yml), temos um workflow que:
 1. **Faz checkout** do repositório  
 2. **Cacheia** dependências Maven  
 3. **Configura** JDK 8  
 4. **Publica** a aplicação no Exchange (`mvn deploy`)  
 5. **Faz o deploy** no CloudHub 2.0  
-   - Usa variáveis de ambiente (`secrets.CONNECTED_APP_CLIENT_ID` e `secrets.CONNECTED_APP_CLIENT_SECRET`) para autenticar
+   - Usa as variáveis (`secrets.CONNECTED_APP_CLIENT_ID` e `secrets.CONNECTED_APP_CLIENT_SECRET`) para autenticar
 
-O pipeline é disparado automaticamente em todo **push** no branch `main`.
+O pipeline é disparado automaticamente a cada **push** no branch `main`.
 
 ---
 
-## Deploy no CloudHub 2.0
+## 🚢 Deploy no CloudHub 2.0
 O [`pom.xml`](pom.xml) está configurado para realizar deploy no **CloudHub 2.0**. Principais pontos:
 
 - `<muleVersion>4.6.14</muleVersion>`: runtime Mule (LTS)  
-- `<releaseChannel>LTS</releaseChannel>`: canal de release do runtime  
+- `<releaseChannel>LTS</releaseChannel>`: canal de release  
 - `<replicas>1</replicas>` e `<vCores>0.1</vCores>`: tamanho e número de réplicas  
 - `<objectStoreV2>` habilitado em `<integrations><services>`  
-- `<updateStrategy>rolling</updateStrategy>`: define o tipo de atualização (rolling vs recreate)
+- `<updateStrategy>rolling</updateStrategy>`: atualização sem downtime
 
 **Exemplo** de comando para forçar o deploy localmente:
 ```bash
@@ -165,17 +168,17 @@ mvn clean deploy -DmuleDeploy \
   -Dclient.secret=<CONNECTED_APP_CLIENT_SECRET>
 ```
 
-> **Observação**: Caso deseje clusterizar (em `<deploymentSettings>` → `<clustered>enabled</clustered>`), lembre-se de ajustar `<replicas>` para `>= 2`.
+> **Observação**: Se desejar clusterizar (em `<deploymentSettings>` → `<clustered>enabled</clustered>`), lembre-se de ajustar `<replicas>` para `>= 2`.
 
 ---
 
-## Configuração de Logs (Log4j2)
+## 📋 Configuração de Logs (Log4j2)
 O arquivo [`log4j2.xml`](https://github.com/LeonelIntegrationXpert/github-actions/blob/main/src/main/resources/log4j2.xml) traz uma configuração **profissional** de logs:
 
-- **Console Appender**: imprime logs no console do Anypoint Studio / CloudHub  
+- **Console Appender**: imprime logs no console do Anypoint Studio/CloudHub  
 - **Rolling File Appender**: gera arquivos com rotação baseada em tamanho e data  
-- **Log Pattern**: inclui data, nível de log, ID de correlação e caminho do processador  
-- **AsyncLogger**: melhora a performance no registro de logs
+- **Log Pattern**: inclui data, nível, ID de correlação e caminho do processador  
+- **AsyncLogger**: melhora a performance de gravação de logs
 
 Exemplo de formato:
 ```
@@ -184,15 +187,16 @@ Exemplo de formato:
 
 ---
 
-## Contato
+## 💬 Contato
 Para dúvidas, suporte ou sugestões, entre em contato com:
+
 - **Leonel Dorneles Porto**  
   - Email: [leoneldornelesporto@outlook.com.br](mailto:leoneldornelesporto@outlook.com.br)  
-  - Telefone: **+55 53 99180-4869**  
+  - Telefone: **+55 53 99180-4869**
 
 ---
 
-## Referências Oficiais
+## 📚 Referências Oficiais
 - [Documentação MuleSoft 4.4](https://docs.mulesoft.com/mule-runtime/4.4/)  
 - [Deploy no CloudHub 2.0](https://docs.mulesoft.com/runtime-manager/deploying-to-cloudhub-2)  
 - [MUnit (Testes e Cobertura)](https://docs.mulesoft.com/munit/)  
