@@ -136,7 +136,7 @@
         <!-- Exemplo de 'layer' (api, process, system, etc.) -->
         <app.layer>api</app.layer>
         <!-- Concatena: layer-artifactId-version-env -->
-        <app.namingPattern>${app.layer}-${project.artifactId}-${env}</app.namingPattern>
+        <app.namingPattern>${app.layer}-${project.artifactId}</app.namingPattern>
 
         <!-- ================================================== -->
         <!-- = 9. VISUALIZER TAGS                             = -->
