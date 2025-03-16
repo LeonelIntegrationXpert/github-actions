@@ -112,7 +112,7 @@ Exemplo de **Fluxo Principal**:
 
 ## Testes Automatizados (MUnit)
 
-- Este projeto possui **testes MUnit** configurados no arquivo [`github-actions-suite.xml`](github-actions-suite.xml).
+- Este projeto possui **testes MUnit** configurados no arquivo [`github-actions-suite.xml`]([github-actions-suite.xml](https://github.com/LeonelIntegrationXpert/github-actions/blob/main/src/test/munit/github-actions-suite.xml)).
 - Para rodar os testes via linha de comando:
   ```bash
   mvn clean test
