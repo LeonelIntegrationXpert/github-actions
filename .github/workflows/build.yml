@@ -7,8 +7,7 @@
 # Telefone  : +55 53 99180-4869
 #################################################################################################
 # Descrição :
-#   - Pipeline de CI/CD para aplicações MuleSoft 4.x, utilizando GitHub Actions.
-#   - Automatiza build, testes, Exchange, e CloudHub 2.0, com versionamento consistente.
+#   - Pipeline de CI/CD para MuleSoft, com controle de versão unificado em múltiplas branches.
 #################################################################################################
 
 name: Publish to Exchange & Deploy to CH2.0
@@ -47,46 +46,61 @@ jobs:
           java-version: 17
 
       #########################################################################
-      # Passo 3: Incrementar a versão uma vez e propagar a mesma para todas as branches
+      # Passo 3: Incrementar a versão a partir da branch atual e propagar
       #########################################################################
-      - name: 🔖 Incrementar versão do pom.xml e propagar
+      - name: 🔖 Incrementar versão do pom.xml e propagar para outras branches
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "🚀 Início do incremento de versão e propagação"
+          echo "🚀 Início do incremento de versão a partir da branch atual"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-          BRANCHES="dev qa prod main"
+          # Branch de origem onde o push aconteceu
+          ORIGIN_BRANCH=$GITHUB_REF_NAME
+          echo "🌿 Branch de origem: $ORIGIN_BRANCH"
 
-          echo "🔍 Buscando versão base no pom.xml..."
-          git checkout dev
-          git pull origin dev
+          # Todas as branches que queremos manter sincronizadas
+          TARGET_BRANCHES="dev qa prod main"
 
+          # Checkout da branch de origem
+          echo "🔄 Fazendo checkout da branch de origem $ORIGIN_BRANCH"
+          git fetch origin $ORIGIN_BRANCH
+          git checkout $ORIGIN_BRANCH || git checkout -b $ORIGIN_BRANCH origin/$ORIGIN_BRANCH
+          git pull origin $ORIGIN_BRANCH
+
+          # Pegando a versão atual do pom.xml
+          echo "🔍 Buscando versão atual no pom.xml da branch $ORIGIN_BRANCH"
           BASE_VERSION=$(grep -m 1 '<version>' pom.xml | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
-          
-          echo "📌 Versão base detectada: $BASE_VERSION"
+          echo "📌 Versão atual detectada: $BASE_VERSION"
 
+          # Fazendo o incremento da versão apenas UMA vez
           IFS='.' read -r MAJOR MINOR PATCH <<< "$BASE_VERSION"
-
-          # Incrementa apenas UMA vez
           NEW_PATCH=$((PATCH + 1))
           NEW_VERSION="${MAJOR}.${MINOR}.${NEW_PATCH}"
-
           echo "🚀 Nova versão: $NEW_VERSION"
-          
-          # Atualiza POM em dev primeiro
+
+          # Atualizando o pom.xml na branch de origem
           sed -i "0,/<version>.*<\/version>/s//<version>${NEW_VERSION}<\/version>/" pom.xml
           grep -m 1 '<version>' pom.xml
 
+          # Comitando e enviando para a branch de origem
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
           git add pom.xml
           git commit -m "🔖 Bump version to $NEW_VERSION [automated by CI/CD]"
-          git push origin dev
+          git push origin $ORIGIN_BRANCH
 
-          # Propaga a MESMA versão para as outras branches
-          for BRANCH in qa prod main
+          ###################################################################
+          # Agora propaga a mesma versão para as demais branches
+          ###################################################################
+          for BRANCH in $TARGET_BRANCHES
           do
+            # Pula a branch de origem (já foi atualizada)
+            if [ "$BRANCH" = "$ORIGIN_BRANCH" ]; then
+              echo "⚠️ Ignorando branch de origem $BRANCH"
+              continue
+            fi
+
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo "🌿 Processando branch: $BRANCH"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -95,7 +109,7 @@ jobs:
             git checkout $BRANCH || git checkout -b $BRANCH origin/$BRANCH
             git pull origin $BRANCH
 
-            # Atualiza versão no POM (com o MESMO valor)
+            # Atualiza o pom.xml com a MESMA nova versão
             sed -i "0,/<version>.*<\/version>/s//<version>${NEW_VERSION}<\/version>/" pom.xml
             grep -m 1 '<version>' pom.xml
 
@@ -107,7 +121,7 @@ jobs:
           done
 
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "✅ Todas as branches foram atualizadas com sucesso para a versão: $NEW_VERSION"
+          echo "✅ Todas as branches foram sincronizadas com a versão: $NEW_VERSION"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
       #########################################################################
@@ -130,12 +144,12 @@ jobs:
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
           echo "📂 Ambiente detectado: $GITHUB_REF_NAME"
-          
+
           mvn deploy --settings .maven/settings.xml -P $GITHUB_REF_NAME -DskipMunitTests \
             -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
             -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
 
-          echo "✅ Publicação no Exchange concluída com sucesso!"
+          echo "✅ Publicação no Exchange concluída!"
 
       #########################################################################
       # Passo 6: Deploy no CloudHub 2.0
@@ -143,7 +157,7 @@ jobs:
       - name: ☁️ Deploy no CloudHub 2.0
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "☁️ Iniciando o deploy no CloudHub 2.0"
+          echo "☁️ Iniciando deploy no CloudHub 2.0"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
           echo "📂 Ambiente detectado: $GITHUB_REF_NAME"
