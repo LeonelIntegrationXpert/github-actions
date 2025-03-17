@@ -1,5 +1,27 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <settings>
+
+  <!--
+    =============================================================================
+     MuleSoft Settings.xml
+    =============================================================================
+     Projeto   : github-actions
+     Autor     : Leonel Dorneles Porto
+     Email     : leoneldornelesporto@outlook.com.br
+     Telefone  : +55 53 99180-4869
+    =============================================================================
+     Descrição :
+       - Define as credenciais para se conectar ao Anypoint Exchange (via 'servers'),
+         além de perfis (profiles) distintos para ambientes (Sandbox, Production).
+       - Cada profile sobrescreve propriedades importantes, como <env>, <region>,
+         <cloudhub.replicas>, etc.
+    =============================================================================
+     Referências:
+       - Perfis do Maven: https://maven.apache.org/settings.html
+       - Mule Maven Plugin: https://docs.mulesoft.com/mule-runtime/latest/mule-maven-plugin
+       - Connected App Scopes: https://help.salesforce.com/s/articleView?id=001119708&type=1
+    =============================================================================
+  -->
 
   <pluginGroups>
     <pluginGroup>org.mule.tools</pluginGroup>
@@ -8,10 +30,55 @@
   <servers>
     <!-- connected app's required scopes: https://help.salesforce.com/s/articleView?id=001119708&type=1 -->
     <server>
-      <id>Repository</id> <!-- make sure this matches the serverId property in pom.xml -->
+      <id>Repository</id>
+      <!-- Deve coincidir com o <serverId> configurado no pom.xml -->
       <username>~~~Client~~~</username>
-      <password>${client.id}~?~${client.secret}</password> <!-- these come from the build.yml and your github secrets -->
+      <!-- Usamos uma concatenação de client.id e client.secret, no formato `id~?~secret` -->
+      <password>${client.id}~?~${client.secret}</password>
     </server>
   </servers>
+
+  <!--
+    Definição de perfis (profiles) para ambientes diferentes.
+    Cada profile pode sobrescrever propriedades usadas pelo Maven (ex.: <env>, <region> etc.).
+  -->
+  <profiles>
+
+    <!-- ============================================ -->
+    <!-- Profile 1: Sandbox (ativo por padrão)       -->
+    <!-- ============================================ -->
+    <profile>
+      <id>Sandbox</id>
+      <properties>
+        <!-- Propriedades específicas do ambiente Sandbox -->
+        <env>Sandbox</env>
+        <region>Cloudhub-US-East-2</region>
+        <cloudhub.replicas>1</cloudhub.replicas>
+        <releaseChannel>LTS</releaseChannel>
+        <app.runtime>4.6.14</app.runtime>
+      </properties>
+    </profile>
+
+    <!-- ============================================ -->
+    <!-- Profile 2: Production                       -->
+    <!-- ============================================ -->
+    <profile>
+      <id>Production</id>
+      <properties>
+        <!-- Propriedades específicas do ambiente Production -->
+        <env>Production</env>
+        <region>Cloudhub-US-West-1</region>
+        <cloudhub.replicas>2</cloudhub.replicas>
+        <releaseChannel>LTS</releaseChannel>
+        <app.runtime>4.6.14</app.runtime>
+      </properties>
+    </profile>
+
+  </profiles>
+
+  <activeProfiles>
+    <!-- Ativa automaticamente o profile Sandbox caso nenhum seja passado via -P -->
+    <activeProfile>Sandbox</activeProfile>
+  </activeProfiles>
 
 </settings>
