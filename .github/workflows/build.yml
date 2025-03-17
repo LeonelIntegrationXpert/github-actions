@@ -95,15 +95,15 @@ jobs:
           git push
 
       # 📌 Passo 5: Publicar no Anypoint Exchange para versionamento do asset
-      - name: 🚀 Publicar no Anypoint Exchange
+      - name: 🚀 Publicar no Anypoint Exchange (Dev)
         run: |
-          mvn deploy --settings .maven/settings.xml -DskipMunitTests \
+          mvn deploy --settings .maven/settings.xml -P dev -DskipMunitTests \
           -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
           -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
 
       # 📌 Passo 6: Realizar deploy no CloudHub 2.0
-      - name: ☁️ Deploy no CloudHub 2.0
+      - name: ☁️ Deploy no CloudHub 2.0 (Dev)
         run: |
-          mvn deploy --settings .maven/settings.xml -DskipMunitTests -DmuleDeploy \
+          mvn deploy --settings .maven/settings.xml -P dev -DskipMunitTests -DmuleDeploy \
           -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
           -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
