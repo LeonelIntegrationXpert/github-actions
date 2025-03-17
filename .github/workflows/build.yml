@@ -1,68 +1,107 @@
+#################################################################################################
+# MuleSoft CI/CD Pipeline - GitHub Actions Workflow
+#################################################################################################
+# Projeto   : github-actions
+# Autor     : Leonel Dorneles Porto
+# Email     : leoneldornelesporto@outlook.com.br
+# Telefone  : +55 53 99180-4869
+#################################################################################################
+# Descrição :
+#   - Pipeline de CI/CD para aplicações MuleSoft 4.x, utilizando GitHub Actions.
+#   - Automatiza o processo de build, testes MUnit, publicação no Anypoint Exchange
+#     e deploy no CloudHub 2.0.
+#   - Inclui incremento automático de versão no pom.xml (sem necessidade de intervenção manual).
+#
+# Funcionalidades :
+#   ✅ Build e package da aplicação MuleSoft
+#   ✅ Execução de testes MUnit com cobertura de código (opcional)
+#   ✅ Publicação de assets no Anypoint Exchange
+#   ✅ Deploy automático no CloudHub 2.0 com Rolling Updates e OSv2
+#   ✅ Controle de variáveis e segredos via GitHub Secrets
+#   ✅ Incremento automático da versão no pom.xml (exemplo: 1.0.0 -> 1.0.1)
+#
+#################################################################################################
+# Documentação oficial MuleSoft:
+#   https://docs.mulesoft.com/mule-runtime/4.4/
+# GitHub Actions - Quickstart:
+#   https://docs.github.com/pt/actions/writing-workflows/quickstart
+# Video referência - Alex Martinez (ProstDev):
+#   https://www.youtube.com/watch?v=hfQaYcjUB9c
+#################################################################################################
+
 name: Publish to Exchange & Deploy to CH2.0
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main ]  # 🚀 Aciona a pipeline automaticamente em pushes no branch `main`
 
 permissions:
-  contents: write  # Necessário para fazer commits e pushes
+  contents: write  # 🔓 Permissão necessária para modificar arquivos (ex: pom.xml) e fazer commits
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # 🖥️ Define o ambiente de execução (Ubuntu mais recente)
 
     steps:
-      - name: Checkout do repositório
+      # 📌 Passo 1: Fazer o checkout do repositório para obter o código-fonte
+      - name: 📥 Checkout do repositório
         uses: actions/checkout@v4
 
-      - name: Cache Maven dependencies
+      # 📌 Passo 2: Habilitar cache do Maven para evitar downloads desnecessários e acelerar builds
+      - name: 📦 Cache Maven dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
+          path: ~/.m2/repository  # 🔄 Pasta do cache do Maven
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}  # 🔑 Cache baseado no `pom.xml`
+          restore-keys: ${{ runner.os }}-maven-  # 🔄 Tenta reutilizar caches antigos se possível
 
-      - name: Setup JDK 8
+      # 📌 Passo 3: Configurar JDK 8 (necessário para MuleSoft 4.x)
+      - name: ☕ Setup JDK 8
         uses: actions/setup-java@v4
         with:
-          distribution: "zulu"
-          java-version: 8
+          distribution: "zulu"  # 🔹 Azul Zulu OpenJDK, recomendado para MuleSoft
+          java-version: 8  # 🔢 Versão do Java exigida pelo MuleSoft
 
-      # 👉 Passo: Buscar a versão atual no pom.xml e incrementar PATCH
+      # 📌 Passo 4: Incrementar automaticamente a versão no pom.xml
       - name: 🔖 Incrementar versão do pom.xml
         run: |
           echo "🔍 Pegando versão do pom.xml..."
           VERSION=$(grep -m 1 '<version>' pom.xml | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
 
-          echo "Versão atual: $VERSION"
+          echo "📌 Versão atual: $VERSION"
 
+          # 🛠️ Separando versão em MAJOR.MINOR.PATCH
           IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
 
+          # 🔼 Incrementando PATCH (exemplo: 1.0.0 → 1.0.1)
           NEW_PATCH=$((PATCH + 1))
           NEW_VERSION="${MAJOR}.${MINOR}.${NEW_PATCH}"
 
           echo "🚀 Nova versão: $NEW_VERSION"
 
-          # Substituir no pom.xml
+          # 📝 Substituir a versão no `pom.xml`
           sed -i "0,/<version>.*<\/version>/s//<version>${NEW_VERSION}<\/version>/" pom.xml
 
-          # Confirmando que alterou
+          # 🔍 Confirmar a alteração
           grep -m 1 '<version>' pom.xml
 
-          # Faz commit e push com a nova versão
+          # 🔄 Configurar Git para commit automático da nova versão
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
+          # 📤 Commit e push da nova versão
           git add pom.xml
           git commit -m "🔖 Bump version to $NEW_VERSION"
           git push
 
+      # 📌 Passo 5: Publicar no Anypoint Exchange para versionamento do asset
       - name: 🚀 Publicar no Anypoint Exchange
         run: |
           mvn deploy --settings .maven/settings.xml -DskipMunitTests \
           -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
           -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
 
+      # 📌 Passo 6: Realizar deploy no CloudHub 2.0
       - name: ☁️ Deploy no CloudHub 2.0
         run: |
           mvn deploy --settings .maven/settings.xml -DskipMunitTests -DmuleDeploy \
