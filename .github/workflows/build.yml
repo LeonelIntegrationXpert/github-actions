@@ -29,17 +29,16 @@ jobs:
           distribution: "zulu"
           java-version: 17
 
-      # Passo 3: Incrementar versão no main
-      - name: 🔖 Incrementa versão no main
+      # Passo 3: Incrementar versão do pom.xml
+      - name: 🔖 Incrementar versão do pom.xml
         run: |
-          git checkout main
-          git pull origin main
-
-          echo "🔍 Pegando versão atual do pom.xml (main)..."
+          echo "🔍 Pegando versão do pom.xml..."
           VERSION=$(grep -m 1 '<version>' pom.xml | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
+          
           echo "📌 Versão atual: $VERSION"
 
           IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+
           NEW_PATCH=$((PATCH + 1))
           NEW_VERSION="${MAJOR}.${MINOR}.${NEW_PATCH}"
 
@@ -47,12 +46,19 @@ jobs:
 
           sed -i "0,/<version>.*<\/version>/s//<version>${NEW_VERSION}<\/version>/" pom.xml
 
+          grep -m 1 '<version>' pom.xml
+
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
           git add pom.xml
-          git commit -m "🔖 Bump version to $NEW_VERSION [ci skip]"
-          git push origin main
+          git commit -m "🔖 Bump version to $NEW_VERSION"
+
+          # 🔄 Faz pull com rebase para evitar conflitos antes de empurrar
+          git pull --rebase origin $GITHUB_REF_NAME
+          
+          # 🚀 Push automático para a branch atual
+          git push origin $GITHUB_REF_NAME
 
       # Passo 4: Sincroniza a versão para dev, qa e prod
       - name: 🔄 Propagar versão para dev, qa, prod
