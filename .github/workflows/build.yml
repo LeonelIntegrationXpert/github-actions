@@ -1,3 +1,33 @@
+#################################################################################################
+# MuleSoft CI/CD Pipeline - GitHub Actions Workflow
+#################################################################################################
+# Projeto   : github-actions
+# Autor     : Leonel Dorneles Porto
+# Email     : leoneldornelesporto@outlook.com.br
+# Telefone  : +55 53 99180-4869
+#################################################################################################
+# Descrição :
+#   - Pipeline de CI/CD para aplicações MuleSoft 4.x, utilizando GitHub Actions.
+#   - Automatiza o processo de build, testes MUnit, publicação no Anypoint Exchange
+#     e deploy no CloudHub 2.0.
+#   - Inclui incremento automático de versão no pom.xml em múltiplas branches.
+#
+#################################################################################################
+# Funcionalidades :
+#   ✅ Build e package da aplicação MuleSoft
+#   ✅ Execução de testes MUnit com cobertura de código (opcional)
+#   ✅ Publicação de assets no Anypoint Exchange
+#   ✅ Deploy automático no CloudHub 2.0 com Rolling Updates e OSv2
+#   ✅ Controle de variáveis e segredos via GitHub Secrets
+#   ✅ Incremento automático da versão no pom.xml em múltiplas branches (ex: dev, qa, prod, main)
+#
+#################################################################################################
+# Documentação oficial MuleSoft:
+#   https://docs.mulesoft.com/mule-runtime/4.4/
+# GitHub Actions - Quickstart:
+#   https://docs.github.com/pt/actions/writing-workflows/quickstart
+#################################################################################################
+
 name: Publish to Exchange & Deploy to CH2.0
 
 on:
@@ -16,81 +46,78 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      #########################################################################
       # Passo 1: Checkout de todas as branches com histórico completo
+      #########################################################################
       - name: 📥 Checkout do repositório completo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # necessário para múltiplas branches e merge
 
+      #########################################################################
       # Passo 2: Configurar JDK 17
+      #########################################################################
       - name: ☕ Setup JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: "zulu"
           java-version: 17
 
-      # Passo 3: Garantir a branch atual sincronizada
-      - name: 🔄 Sincronizar a branch atual
+      #########################################################################
+      # Passo 3: Incrementar a versão em todas as branches
+      #########################################################################
+      - name: 🔖 Incrementar versão do pom.xml em todas as branches
         run: |
-          echo "🌿 Branch atual detectada: $GITHUB_REF_NAME"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🚀 Início do incremento de versão nas branches"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-          git fetch origin $GITHUB_REF_NAME
-          git checkout $GITHUB_REF_NAME || git checkout -b $GITHUB_REF_NAME origin/$GITHUB_REF_NAME
-          git pull origin $GITHUB_REF_NAME
+          BRANCHES="dev qa prod main"
 
-      # Passo 4: Incrementar versão do pom.xml na branch atual
-      - name: 🔖 Incrementar versão do pom.xml na branch atual
-        run: |
-          echo "🔍 Pegando versão do pom.xml..."
-          VERSION=$(grep -m 1 '<version>' pom.xml | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
+          echo "🔍 Buscando versão base no pom.xml..."
+          BASE_VERSION=$(grep -m 1 '<version>' pom.xml | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
           
-          echo "📌 Versão atual: $VERSION"
+          echo "📌 Versão base detectada: $BASE_VERSION"
 
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$BASE_VERSION"
 
-          NEW_PATCH=$((PATCH + 1))
-          NEW_VERSION="${MAJOR}.${MINOR}.${NEW_PATCH}"
-
-          echo "🚀 Nova versão: $NEW_VERSION"
-
-          sed -i "0,/<version>.*<\/version>/s//<version>${NEW_VERSION}<\/version>/" pom.xml
-
-          grep -m 1 '<version>' pom.xml
-
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-
-          git add pom.xml
-          git commit -m "🔖 Bump version to $NEW_VERSION"
-
-          git push origin $GITHUB_REF_NAME
-
-      # Passo 5: Propagar versão para as demais branches (sem conflitos)
-      - name: 🔄 Propagar versão para as demais branches
-        run: |
-          echo "🌿 Branch de origem: $GITHUB_REF_NAME"
-
-          # Define as branches que receberão o merge
-          TARGET_BRANCHES="dev qa prod main"
-
-          # Remove a branch atual da lista para não repetir merge nela
-          PROPAGATE_BRANCHES=$(echo $TARGET_BRANCHES | sed "s/\b$GITHUB_REF_NAME\b//g")
-
-          for BRANCH in $PROPAGATE_BRANCHES
+          for BRANCH in $BRANCHES
           do
-            echo "🚀 Propagando versão para a branch $BRANCH"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "🌿 Processando branch: $BRANCH"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
             git fetch origin $BRANCH
             git checkout $BRANCH || git checkout -b $BRANCH origin/$BRANCH
             git pull origin $BRANCH
 
-            # Merge com preferência para as alterações da branch origem (para evitar conflitos)
-            git merge -X theirs $GITHUB_REF_NAME --no-edit || true
+            PATCH=$((PATCH + 1))
+            NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
 
+            echo "🔧 Atualizando versão para: $NEW_VERSION"
+
+            sed -i "0,/<version>.*<\/version>/s//<version>${NEW_VERSION}<\/version>/" pom.xml
+            grep -m 1 '<version>' pom.xml
+
+            git config user.name "github-actions"
+            git config user.email "github-actions@github.com"
+
+            git add pom.xml
+            git commit -m "🔖 Bump version to $NEW_VERSION [automated by CI/CD]"
+
+            echo "📤 Enviando alterações para o repositório remoto..."
             git push origin $BRANCH
+
+            echo "✅ Atualização concluída na branch: $BRANCH"
           done
 
-      # Passo 6: Cache Maven dependencies
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ Todas as branches foram atualizadas com sucesso!"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      #########################################################################
+      # Passo 4: Cache Maven dependencies
+      #########################################################################
       - name: 📦 Cache Maven dependencies
         uses: actions/cache@v4
         with:
@@ -98,18 +125,36 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
 
-      # Passo 7: Publicação no Anypoint Exchange
+      #########################################################################
+      # Passo 5: Publicação no Anypoint Exchange
+      #########################################################################
       - name: 🚀 Publicar no Anypoint Exchange
         run: |
-          echo "🌎 Ambiente detectado: $GITHUB_REF_NAME"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🌎 Publicando no Anypoint Exchange"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          echo "📂 Ambiente detectado: $GITHUB_REF_NAME"
+          
           mvn deploy --settings .maven/settings.xml -P $GITHUB_REF_NAME -DskipMunitTests \
             -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
             -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
 
-      # Passo 8: Deploy no CloudHub 2.0
+          echo "✅ Publicação no Exchange concluída com sucesso!"
+
+      #########################################################################
+      # Passo 6: Deploy no CloudHub 2.0
+      #########################################################################
       - name: ☁️ Deploy no CloudHub 2.0
         run: |
-          echo "🌎 Ambiente detectado: $GITHUB_REF_NAME"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "☁️ Iniciando o deploy no CloudHub 2.0"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          echo "📂 Ambiente detectado: $GITHUB_REF_NAME"
+
           mvn deploy --settings .maven/settings.xml -P $GITHUB_REF_NAME -DskipMunitTests -DmuleDeploy \
             -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
             -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
+
+          echo "✅ Deploy no CloudHub 2.0 realizado com sucesso!"
