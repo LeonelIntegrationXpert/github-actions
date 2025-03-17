@@ -29,7 +29,7 @@
     -->
     <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
     <artifactId>github-actions</artifactId>
-    <version>1.0.35</version>
+    <version>1.0.33</version>
     <packaging>mule-application</packaging>
     <name>github-actions</name>
 
@@ -130,7 +130,8 @@
         <!-- Exemplo de 'layer' (api, process, system, etc.) -->
         <app.layer>api</app.layer>
         <!-- Concatena: layer-artifactId-version-env -->
-        <app.namingPattern>${app.layer}-${project.artifactId}</app.namingPattern>
+		<app.namingPattern>${project.artifactId}-${app.layer}-${env}-v${project.version}</app.namingPattern>
+
 
         <!-- ================================================== -->
         <!-- = 9. VISUALIZER TAGS                             = -->
