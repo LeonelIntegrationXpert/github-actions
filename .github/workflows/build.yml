@@ -3,8 +3,8 @@ name: Publish to Exchange & Deploy to CH2.0
 on:
   push:
     branches: [ main ]
-
-jobs:
+    
+jobs:         
   build:
     runs-on: ubuntu-latest
     steps:
@@ -23,44 +23,14 @@ jobs:
         with:
           distribution: "zulu"
           java-version: 8
-
-      - name: Bump version in pom.xml 🚀
-        id: bump
-        run: |
-          echo "Getting current version..."
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          
-          echo "Current version: $VERSION"
-
-          # Extrai major.minor.patch
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
-
-          # Incrementa PATCH
-          NEW_PATCH=$((PATCH + 1))
-          NEW_VERSION="${MAJOR}.${MINOR}.${NEW_PATCH}"
-
-          echo "New version: $NEW_VERSION"
-
-          # Atualiza o pom.xml com o novo versionamento
-          mvn versions:set -DnewVersion=$NEW_VERSION
-          
-          # Confirma alterações no pom.xml
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          
-          git add pom.xml
-          git commit -m "🔖 Bump version to $NEW_VERSION"
-          git push
-          
-          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-
-      - name: Publish to Exchange 🟦
+      
+      - name: Publish to Exchange
         run: |
           mvn deploy --settings .maven/settings.xml -DskipMunitTests \
           -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
           -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
 
-      - name: Deploy to CloudHub 2.0 ☁️
+      - name: Deploy to CloudHub 2.0
         run: |
           mvn deploy --settings .maven/settings.xml -DskipMunitTests -DmuleDeploy \
           -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
