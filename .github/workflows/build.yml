@@ -63,7 +63,7 @@ jobs:
       # Passo 4: Sincroniza a versão para dev, qa e prod
       - name: 🔄 Propagar versão para dev, qa, prod
         run: |
-          for BRANCH in dev qa prod
+          for BRANCH in qa prod main
           do
             echo "🌿 Processando branch $BRANCH"
             git checkout $BRANCH
