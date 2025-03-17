@@ -1,24 +1,115 @@
-# Passo 5: Propagar versão para outras branches com merge automático (prioriza branch origem)
-- name: 🔄 Propagar versão para as demais branches
-  run: |
-    echo "🌿 Branch de origem: $GITHUB_REF_NAME"
+name: Publish to Exchange & Deploy to CH2.0
 
-    # Define as branches que receberão o merge
-    TARGET_BRANCHES="dev qa prod main"
+on:
+  push:
+    branches: 
+      - dev
+      - qa
+      - prod
+      - main
 
-    # Remove a branch atual da lista
-    PROPAGATE_BRANCHES=$(echo $TARGET_BRANCHES | sed "s/\b$GITHUB_REF_NAME\b//g")
+permissions:
+  contents: write
 
-    for BRANCH in $PROPAGATE_BRANCHES
-    do
-      echo "🚀 Propagando versão para a branch $BRANCH"
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-      git fetch origin $BRANCH
-      git checkout $BRANCH || git checkout -b $BRANCH origin/$BRANCH
-      git pull origin $BRANCH
+    steps:
+      # Passo 1: Checkout de todas as branches com histórico completo
+      - name: 📥 Checkout do repositório completo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # necessário para múltiplas branches e merge
 
-      # Merge com preferência para as alterações da branch origem (dev)
-      git merge -X theirs $GITHUB_REF_NAME --no-edit || true
+      # Passo 2: Configurar JDK 17
+      - name: ☕ Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: 17
 
-      git push origin $BRANCH
-    done
+      # Passo 3: Garantir a branch atual sincronizada
+      - name: 🔄 Sincronizar a branch atual
+        run: |
+          echo "🌿 Branch atual detectada: $GITHUB_REF_NAME"
+
+          git fetch origin $GITHUB_REF_NAME
+          git checkout $GITHUB_REF_NAME || git checkout -b $GITHUB_REF_NAME origin/$GITHUB_REF_NAME
+          git pull origin $GITHUB_REF_NAME
+
+      # Passo 4: Incrementar versão do pom.xml na branch atual
+      - name: 🔖 Incrementar versão do pom.xml na branch atual
+        run: |
+          echo "🔍 Pegando versão do pom.xml..."
+          VERSION=$(grep -m 1 '<version>' pom.xml | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
+          
+          echo "📌 Versão atual: $VERSION"
+
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+
+          NEW_PATCH=$((PATCH + 1))
+          NEW_VERSION="${MAJOR}.${MINOR}.${NEW_PATCH}"
+
+          echo "🚀 Nova versão: $NEW_VERSION"
+
+          sed -i "0,/<version>.*<\/version>/s//<version>${NEW_VERSION}<\/version>/" pom.xml
+
+          grep -m 1 '<version>' pom.xml
+
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add pom.xml
+          git commit -m "🔖 Bump version to $NEW_VERSION"
+
+          git push origin $GITHUB_REF_NAME
+
+      # Passo 5: Propagar versão para as demais branches (sem conflitos)
+      - name: 🔄 Propagar versão para as demais branches
+        run: |
+          echo "🌿 Branch de origem: $GITHUB_REF_NAME"
+
+          # Define as branches que receberão o merge
+          TARGET_BRANCHES="dev qa prod main"
+
+          # Remove a branch atual da lista para não repetir merge nela
+          PROPAGATE_BRANCHES=$(echo $TARGET_BRANCHES | sed "s/\b$GITHUB_REF_NAME\b//g")
+
+          for BRANCH in $PROPAGATE_BRANCHES
+          do
+            echo "🚀 Propagando versão para a branch $BRANCH"
+
+            git fetch origin $BRANCH
+            git checkout $BRANCH || git checkout -b $BRANCH origin/$BRANCH
+            git pull origin $BRANCH
+
+            # Merge com preferência para as alterações da branch origem (para evitar conflitos)
+            git merge -X theirs $GITHUB_REF_NAME --no-edit || true
+
+            git push origin $BRANCH
+          done
+
+      # Passo 6: Cache Maven dependencies
+      - name: 📦 Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      # Passo 7: Publicação no Anypoint Exchange
+      - name: 🚀 Publicar no Anypoint Exchange
+        run: |
+          echo "🌎 Ambiente detectado: $GITHUB_REF_NAME"
+          mvn deploy --settings .maven/settings.xml -P $GITHUB_REF_NAME -DskipMunitTests \
+            -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
+            -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
+
+      # Passo 8: Deploy no CloudHub 2.0
+      - name: ☁️ Deploy no CloudHub 2.0
+        run: |
+          echo "🌎 Ambiente detectado: $GITHUB_REF_NAME"
+          mvn deploy --settings .maven/settings.xml -P $GITHUB_REF_NAME -DskipMunitTests -DmuleDeploy \
+            -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
+            -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
