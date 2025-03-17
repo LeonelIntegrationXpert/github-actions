@@ -92,7 +92,9 @@ jobs:
           # 📤 Commit e push da nova versão
           git add pom.xml
           git commit -m "🔖 Bump version to $NEW_VERSION"
-          git push
+          
+          # 🔥 Empurra pro branch atual que disparou o workflow
+          git push origin HEAD:${GITHUB_REF#refs/heads/}
 
       # 📌 Passo 5: Publicar no Anypoint Exchange para versionamento do asset
       - name: 🚀 Publicar no Anypoint Exchange (Dev)
