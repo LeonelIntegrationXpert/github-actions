@@ -1,35 +1,3 @@
-#################################################################################################
-# MuleSoft CI/CD Pipeline - GitHub Actions Workflow
-#################################################################################################
-# Projeto   : github-actions
-# Autor     : Leonel Dorneles Porto
-# Email     : leoneldornelesporto@outlook.com.br
-# Telefone  : +55 53 99180-4869
-#################################################################################################
-# Descrição :
-#   - Pipeline de CI/CD para aplicações MuleSoft 4.x, utilizando GitHub Actions.
-#   - Automatiza o processo de build, testes MUnit, publicação no Anypoint Exchange
-#     e deploy no CloudHub 2.0.
-#   - Inclui incremento automático de versão no pom.xml (sem necessidade de intervenção manual).
-#
-#################################################################################################
-# Funcionalidades :
-#   ✅ Build e package da aplicação MuleSoft
-#   ✅ Execução de testes MUnit com cobertura de código (opcional)
-#   ✅ Publicação de assets no Anypoint Exchange
-#   ✅ Deploy automático no CloudHub 2.0 com Rolling Updates e OSv2
-#   ✅ Controle de variáveis e segredos via GitHub Secrets
-#   ✅ Incremento automático da versão no pom.xml (exemplo: 1.0.0 -> 1.0.1)
-#
-#################################################################################################
-# Documentação oficial MuleSoft:
-#   https://docs.mulesoft.com/mule-runtime/4.4/
-# GitHub Actions - Quickstart:
-#   https://docs.github.com/pt/actions/writing-workflows/quickstart
-# Video referência - Alex Martinez (ProstDev):
-#   https://www.youtube.com/watch?v=hfQaYcjUB9c
-#################################################################################################
-
 name: Publish to Exchange & Deploy to CH2.0
 
 on:
@@ -38,37 +6,40 @@ on:
       - dev
       - qa
       - prod
-      - main  # Inclui se quiser deploy em outras branches também
+      - main
 
 permissions:
-  contents: write  # 🔓 Permissão necessária para modificar arquivos (ex: pom.xml) e fazer commits
+  contents: write
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # 🖥️ Ambiente de execução no GitHub Actions
+    runs-on: ubuntu-latest
 
     steps:
-      # 📌 Passo 1: Fazer o checkout do repositório
-      - name: 📥 Checkout do repositório
+      # Passo 1: Checkout de todas as branches com histórico completo
+      - name: 📥 Checkout do repositório completo
         uses: actions/checkout@v4
-
-      # 📌 Passo 2: Cache de dependências Maven
-      - name: 📦 Cache Maven dependencies
-        uses: actions/cache@v4
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
+          fetch-depth: 0  # necessário para múltiplas branches e merge
 
-      # 📌 Passo 3: Configurar JDK 17
+      # Passo 2: Configurar JDK 17
       - name: ☕ Setup JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: "zulu"  # Azul Zulu OpenJDK (recomendado para Mule 4.8+)
+          distribution: "zulu"
           java-version: 17
 
-      # 📌 Passo 4: Incrementar versão automaticamente no pom.xml
-      - name: 🔖 Incrementar versão do pom.xml
+      # Passo 3: Garantir a branch atual sincronizada
+      - name: 🔄 Sincronizar a branch atual
+        run: |
+          echo "🌿 Branch atual detectada: $GITHUB_REF_NAME"
+
+          git fetch origin $GITHUB_REF_NAME
+          git checkout $GITHUB_REF_NAME || git checkout -b $GITHUB_REF_NAME origin/$GITHUB_REF_NAME
+          git pull origin $GITHUB_REF_NAME
+
+      # Passo 4: Incrementar versão do pom.xml na branch atual
+      - name: 🔖 Incrementar versão do pom.xml na branch atual
         run: |
           echo "🔍 Pegando versão do pom.xml..."
           VERSION=$(grep -m 1 '<version>' pom.xml | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
@@ -92,13 +63,42 @@ jobs:
           git add pom.xml
           git commit -m "🔖 Bump version to $NEW_VERSION"
 
-          # 🔄 Faz pull com rebase para evitar conflitos antes de empurrar
-          git pull --rebase origin $GITHUB_REF_NAME
-          
-          # 🚀 Push automático para a branch atual
           git push origin $GITHUB_REF_NAME
 
-      # 📌 Passo 5: Publicação no Anypoint Exchange
+      # Passo 5: Propagar versão para as demais branches (sem conflitos)
+      - name: 🔄 Propagar versão para as demais branches
+        run: |
+          echo "🌿 Branch de origem: $GITHUB_REF_NAME"
+
+          # Define as branches que receberão o merge
+          TARGET_BRANCHES="dev qa prod main"
+
+          # Remove a branch atual da lista para não repetir merge nela
+          PROPAGATE_BRANCHES=$(echo $TARGET_BRANCHES | sed "s/\b$GITHUB_REF_NAME\b//g")
+
+          for BRANCH in $PROPAGATE_BRANCHES
+          do
+            echo "🚀 Propagando versão para a branch $BRANCH"
+
+            git fetch origin $BRANCH
+            git checkout $BRANCH || git checkout -b $BRANCH origin/$BRANCH
+            git pull origin $BRANCH
+
+            # Merge com preferência para as alterações da branch origem (para evitar conflitos)
+            git merge -X theirs $GITHUB_REF_NAME --no-edit || true
+
+            git push origin $BRANCH
+          done
+
+      # Passo 6: Cache Maven dependencies
+      - name: 📦 Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      # Passo 7: Publicação no Anypoint Exchange
       - name: 🚀 Publicar no Anypoint Exchange
         run: |
           echo "🌎 Ambiente detectado: $GITHUB_REF_NAME"
@@ -106,7 +106,7 @@ jobs:
             -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
             -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
 
-      # 📌 Passo 6: Deploy no CloudHub 2.0
+      # Passo 8: Deploy no CloudHub 2.0
       - name: ☁️ Deploy no CloudHub 2.0
         run: |
           echo "🌎 Ambiente detectado: $GITHUB_REF_NAME"
