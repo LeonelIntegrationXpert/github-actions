@@ -12,6 +12,7 @@
 #     e deploy no CloudHub 2.0.
 #   - Inclui incremento automático de versão no pom.xml (sem necessidade de intervenção manual).
 #
+#################################################################################################
 # Funcionalidades :
 #   ✅ Build e package da aplicação MuleSoft
 #   ✅ Execução de testes MUnit com cobertura de código (opcional)
@@ -33,77 +34,82 @@ name: Publish to Exchange & Deploy to CH2.0
 
 on:
   push:
-    branches: [ main ]  # 🚀 Aciona a pipeline automaticamente em pushes no branch `main`
+    branches: 
+      - dev
+      - qa
+      - prod
+      - main  # Inclui se quiser deploy em outras branches também
 
 permissions:
   contents: write  # 🔓 Permissão necessária para modificar arquivos (ex: pom.xml) e fazer commits
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # 🖥️ Define o ambiente de execução (Ubuntu mais recente)
+    runs-on: ubuntu-latest  # 🖥️ Ambiente de execução no GitHub Actions
 
     steps:
-      # 📌 Passo 1: Fazer o checkout do repositório para obter o código-fonte
+      # 📌 Passo 1: Fazer o checkout do repositório
       - name: 📥 Checkout do repositório
         uses: actions/checkout@v4
 
-      # 📌 Passo 2: Habilitar cache do Maven para evitar downloads desnecessários e acelerar builds
+      # 📌 Passo 2: Cache de dependências Maven
       - name: 📦 Cache Maven dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.m2/repository  # 🔄 Pasta do cache do Maven
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}  # 🔑 Cache baseado no `pom.xml`
-          restore-keys: ${{ runner.os }}-maven-  # 🔄 Tenta reutilizar caches antigos se possível
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
 
-      # 📌 Passo 3: Configurar JDK 8 (necessário para MuleSoft 4.x)
-      - name: ☕ Setup JDK 8
+      # 📌 Passo 3: Configurar JDK 17
+      - name: ☕ Setup JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: "zulu"  # 🔹 Azul Zulu OpenJDK, recomendado para MuleSoft
-          java-version: 8  # 🔢 Versão do Java exigida pelo MuleSoft
+          distribution: "zulu"  # Azul Zulu OpenJDK (recomendado para Mule 4.8+)
+          java-version: 17
 
-      # 📌 Passo 4: Incrementar automaticamente a versão no pom.xml
+      # 📌 Passo 4: Incrementar versão automaticamente no pom.xml
       - name: 🔖 Incrementar versão do pom.xml
         run: |
           echo "🔍 Pegando versão do pom.xml..."
           VERSION=$(grep -m 1 '<version>' pom.xml | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
-
+          
           echo "📌 Versão atual: $VERSION"
 
-          # 🛠️ Separando versão em MAJOR.MINOR.PATCH
           IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
 
-          # 🔼 Incrementando PATCH (exemplo: 1.0.0 → 1.0.1)
           NEW_PATCH=$((PATCH + 1))
           NEW_VERSION="${MAJOR}.${MINOR}.${NEW_PATCH}"
 
           echo "🚀 Nova versão: $NEW_VERSION"
 
-          # 📝 Substituir a versão no `pom.xml`
           sed -i "0,/<version>.*<\/version>/s//<version>${NEW_VERSION}<\/version>/" pom.xml
 
-          # 🔍 Confirmar a alteração
           grep -m 1 '<version>' pom.xml
 
-          # 🔄 Configurar Git para commit automático da nova versão
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-          # 📤 Commit e push da nova versão
           git add pom.xml
           git commit -m "🔖 Bump version to $NEW_VERSION"
-          git push
 
-      # 📌 Passo 5: Publicar no Anypoint Exchange para versionamento do asset
+          # 🔄 Faz pull com rebase para evitar conflitos antes de empurrar
+          git pull --rebase origin $GITHUB_REF_NAME
+          
+          # 🚀 Push automático para a branch atual
+          git push origin $GITHUB_REF_NAME
+
+      # 📌 Passo 5: Publicação no Anypoint Exchange
       - name: 🚀 Publicar no Anypoint Exchange
         run: |
-          mvn deploy --settings .maven/settings.xml -DskipMunitTests \
-          -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
-          -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
+          echo "🌎 Ambiente detectado: $GITHUB_REF_NAME"
+          mvn deploy --settings .maven/settings.xml -P $GITHUB_REF_NAME -DskipMunitTests \
+            -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
+            -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
 
-      # 📌 Passo 6: Realizar deploy no CloudHub 2.0
+      # 📌 Passo 6: Deploy no CloudHub 2.0
       - name: ☁️ Deploy no CloudHub 2.0
         run: |
-          mvn deploy --settings .maven/settings.xml -DskipMunitTests -DmuleDeploy \
-          -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
-          -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
+          echo "🌎 Ambiente detectado: $GITHUB_REF_NAME"
+          mvn deploy --settings .maven/settings.xml -P $GITHUB_REF_NAME -DskipMunitTests -DmuleDeploy \
+            -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
+            -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
