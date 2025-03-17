@@ -116,7 +116,7 @@
 
   <activeProfiles>
     <!-- Ativa automaticamente o profile dev (padrão minúsculo) -->
-    <activeProfile>prod</activeProfile>
+    <activeProfile>dev</activeProfile>
   </activeProfiles>
 
 </settings>
