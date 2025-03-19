@@ -49,6 +49,11 @@
          CloudHub/Visualizer está no Parent.
     =============================================================================
     -->
+
+   <properties>
+       <anypoint.exchange.v3.url>https://maven.anypoint.mulesoft.com/api/v3/maven</anypoint.exchange.v3.url>
+   </properties>
+
     <parent>
         <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
         <artifactId>common-pom-parent</artifactId>
