@@ -52,6 +52,7 @@
       <properties>
         <!-- Propriedades específicas do ambiente Sandbox -->
         <env>Sandbox</env>
+        <anypoint.exchange.v3.url>${base.maven.anypoint.url}/maven</anypoint.exchange.v3.url>
         <region>Cloudhub-US-East-2</region>
         <cloudhub.vcores>0.1</cloudhub.vcores>
         <cloudhub.replicas>1</cloudhub.replicas>
@@ -69,6 +70,7 @@
       <properties>
         <!-- Propriedades específicas do ambiente dev -->
         <env>dev</env>
+	<anypoint.exchange.v3.url>${base.maven.anypoint.url}/maven</anypoint.exchange.v3.url>
         <region>Cloudhub-US-East-2</region>
         <cloudhub.vcores>0.1</cloudhub.vcores>
         <cloudhub.replicas>1</cloudhub.replicas>
@@ -86,6 +88,7 @@
       <properties>
         <!-- Propriedades específicas do ambiente qa -->
         <env>qa</env>
+	<anypoint.exchange.v3.url>${base.maven.anypoint.url}/maven</anypoint.exchange.v3.url>
         <region>Cloudhub-US-East-2</region>
         <cloudhub.vcores>0.1</cloudhub.vcores>
         <cloudhub.replicas>1</cloudhub.replicas>
@@ -103,6 +106,7 @@
       <properties>
         <!-- Propriedades específicas do ambiente prod -->
         <env>prod</env>
+	<anypoint.exchange.v3.url>${base.maven.anypoint.url}/maven</anypoint.exchange.v3.url>
         <region>Cloudhub-US-East-2</region>
         <cloudhub.vcores>0.1</cloudhub.vcores>
         <cloudhub.replicas>1</cloudhub.replicas>
