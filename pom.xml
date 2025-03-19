@@ -51,7 +51,7 @@
     -->
 
    <properties>
-       <anypoint.exchange.v3.url>https://maven.anypoint.mulesoft.com/api/v3/maven</anypoint.exchange.v3.url>
+       <anypoint.exchange.v3.url>https://maven.anypoint.mulesoft.com/api/v2/maven</anypoint.exchange.v3.url>
    </properties>
 
     <parent>
