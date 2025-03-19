@@ -29,7 +29,21 @@
 
     <!-- 
     =============================================================================
-     (2) Herança do Parent POM (common-pom-parent)
+     (2) Identificação do Projeto Mule
+       - Ajuste o artifactId, version e groupId conforme sua organização.
+    =============================================================================
+    -->
+    <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
+    <artifactId>github-actions</artifactId>
+    <version>1.0.84</version>
+    <packaging>mule-application</packaging>
+
+    <name>github-actions</name>
+    <description>Exemplo de projeto MuleSoft com build e deploy via GitHub Actions, herda configs do parent-pom.</description>
+
+    <!-- 
+    =============================================================================
+     (3) Herança do Parent POM (common-pom-parent)
        - Este Parent já herda as versões do BOM (common-bom).
        - Toda a configuração de build, plugins e propriedades de 
          CloudHub/Visualizer está no Parent.
@@ -38,22 +52,8 @@
     <parent>
         <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
         <artifactId>common-pom-parent</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.0</version>
     </parent>
-
-    <!-- 
-    =============================================================================
-     (3) Identificação do Projeto Mule
-       - Ajuste o artifactId, version e groupId conforme sua organização.
-    =============================================================================
-    -->
-    <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
-    <artifactId>github-actions</artifactId>
-    <version>1.0.83</version>
-    <packaging>mule-application</packaging>
-
-    <name>github-actions</name>
-    <description>Exemplo de projeto MuleSoft com build e deploy via GitHub Actions, herda configs do parent-pom.</description>
 
     <!-- 
     =============================================================================
