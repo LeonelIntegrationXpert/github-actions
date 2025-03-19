@@ -151,7 +151,6 @@
         <!-- Propriedade base para qualquer URL do Anypoint -->
         <base.maven.anypoint.url>https://maven.anypoint.mulesoft.com/api/v3</base.maven.anypoint.url>
         <!-- URLs derivadas da base -->
-        <anypoint.exchange.v3.url>${base.maven.anypoint.url}/maven</anypoint.exchange.v3.url>
         <private.exchange.url>${base.maven.anypoint.url}/organizations/${project.groupId}/maven</private.exchange.url>
 
         <!-- ================================================== -->
