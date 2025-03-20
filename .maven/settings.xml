@@ -43,6 +43,13 @@
       <!-- Usamos concatenação de client.id e client.secret: `id~?~secret` -->
       <password>${client.id}~?~${client.secret}</password>
     </server>
+
+    <!-- Server para baixar do Exchange (Repositories) -->
+    <server>
+      <id>anypoint-exchange-v3</id> <!-- Precisa bater com o <repository> do pom.xml -->
+      <username>~~~Client~~~</username> <!-- Connected App Client ID -->
+      <password>${client.id}~?~${client.secret}</password> <!-- Connected App Client Secret -->
+    </server>
   </servers>
 
   <!-- ======================================================== -->
