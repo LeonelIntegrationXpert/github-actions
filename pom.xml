@@ -169,17 +169,12 @@
     </pluginRepositories>
 
     <repositories>
-    <repository>
-        <id>anypoint-exchange-v3</id>
-        <name>Anypoint Exchange v3 (Public)</name>
-        <url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
-    </repository>
-
-    <repository>
-        <id>anypoint-exchange-v3-private</id>
-        <name>Anypoint Exchange v3 (Private)</name>
-        <url>https://maven.anypoint.mulesoft.com/api/v3/organizations/37a4147b-4673-4cb6-b589-358074a13f8c/maven</url>
-    </repository>
+        <!-- Repositório padrão do Anypoint Exchange v3 -->
+        <repository>
+            <id>anypoint-exchange-v3</id>
+            <name>Anypoint Exchange</name>
+            <url>${anypoint.exchange.v3.url}</url>
+        </repository>
 
         <!-- Repositório de releases da MuleSoft -->
         <repository>
