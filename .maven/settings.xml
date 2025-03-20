@@ -53,7 +53,7 @@
     <anypoint.organization.id>37a4147b-4673-4cb6-b589-358074a13f8c</anypoint.organization.id>
 
     <!-- URL base do Maven Anypoint -->
-    <base.maven.anypoint.url>https://maven.anypoint.mulesoft.com/api/v3</base.maven.anypoint.url>
+    <base.maven.anypoint.url>https://maven.anypoint.mulesoft.com/api/v99</base.maven.anypoint.url>
 
     <!-- URL para repositório privado no Exchange (org + groupId real da org) -->
     <private.exchange.url>${base.maven.anypoint.url}/organizations/${anypoint.organization.id}/maven</private.exchange.url>
