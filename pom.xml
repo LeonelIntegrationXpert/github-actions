@@ -29,7 +29,7 @@
     -->
     <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
     <artifactId>github-actions</artifactId>
-    <version>3.1.11</version>
+    <version>3.1.12</version>
     <packaging>mule-application</packaging>
     <name>github-actions</name>
 
