@@ -43,11 +43,6 @@
       <!-- Usamos concatenação de client.id e client.secret: `id~?~secret` -->
       <password>${client.id}~?~${client.secret}</password>
     </server>
-    <server>
-      <id>anypoint-exchange-v3</id> <!-- 👈 Esse ID precisa bater com o <repository> -->
-      <username>~~~Client~~~</username>
-      <password>${client.id}~?~${client.secret}</password>
-    </server>
   </servers>
 
   <!-- ======================================================== -->
