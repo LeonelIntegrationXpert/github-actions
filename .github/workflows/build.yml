@@ -7,7 +7,7 @@
 # Telefone  : +55 53 99180-4869
 #################################################################################################
 # Descrição :
-#   - Pipeline de CI/CD para MuleSoft, com controle de versão unificado em múltiplas branches.
+#   - Pipeline de CI/CD para MuleSoft com deploy no CloudHub 2.0 e publicação no Exchange.
 #################################################################################################
 
 name: Publish to Exchange & Deploy to CH2.0
@@ -29,99 +29,58 @@ jobs:
 
     steps:
       #########################################################################
-      # Passo 1: Checkout de todas as branches com histórico completo
+      # Passo 1: Checkout do repositório
       #########################################################################
-      - name: 📥 Checkout do repositório completo
+      - name: 📥 Checkout do repositório
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # necessário para múltiplas branches e merge
+          fetch-depth: 0  # necessário para obter todo o histórico da branch
 
       #########################################################################
       # Passo 2: Configurar JDK 17
       #########################################################################
-      - name: ☕ Setup JDK 17
+      - name: ☕ Configurando JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: "zulu"
           java-version: 17
 
       #########################################################################
-      # Passo 3: Incrementar a versão a partir da branch atual e propagar
+      # Passo 3: Incrementar a versão do projeto na branch atual
       #########################################################################
-      - name: 🔖 Incrementar versão do pom.xml e propagar para outras branches
+      - name: 🔖 Incrementar versão do pom.xml (apenas branch atual)
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "🚀 Início do incremento de versão a partir da branch atual"
+          echo "🚀 Início do incremento de versão"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-          # Branch de origem onde o push aconteceu
-          ORIGIN_BRANCH=$GITHUB_REF_NAME
-          echo "🌿 Branch de origem: $ORIGIN_BRANCH"
+          BRANCH_ATUAL=$GITHUB_REF_NAME
+          echo "🌿 Branch atual: $BRANCH_ATUAL"
 
-          # Todas as branches que queremos manter sincronizadas
-          TARGET_BRANCHES="dev qa prod main"
+          git fetch origin $BRANCH_ATUAL
+          git checkout $BRANCH_ATUAL || git checkout -b $BRANCH_ATUAL origin/$BRANCH_ATUAL
+          git pull origin $BRANCH_ATUAL
 
-          # Checkout da branch de origem
-          echo "🔄 Fazendo checkout da branch de origem $ORIGIN_BRANCH"
-          git fetch origin $ORIGIN_BRANCH
-          git checkout $ORIGIN_BRANCH || git checkout -b $ORIGIN_BRANCH origin/$ORIGIN_BRANCH
-          git pull origin $ORIGIN_BRANCH
+          echo "🔍 Buscando versão atual no pom.xml"
+          VERSAO_ATUAL=$(grep -m 1 '<version>' pom.xml | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
+          echo "📌 Versão atual: $VERSAO_ATUAL"
 
-          # Pegando a versão atual do pom.xml
-          echo "🔍 Buscando versão atual no pom.xml da branch $ORIGIN_BRANCH"
-          BASE_VERSION=$(grep -m 1 '<version>' pom.xml | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
-          echo "📌 Versão atual detectada: $BASE_VERSION"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSAO_ATUAL"
+          NOVO_PATCH=$((PATCH + 1))
+          NOVA_VERSAO="${MAJOR}.${MINOR}.${NOVO_PATCH}"
+          echo "🚀 Nova versão: $NOVA_VERSAO"
 
-          # Fazendo o incremento da versão apenas UMA vez
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$BASE_VERSION"
-          NEW_PATCH=$((PATCH + 1))
-          NEW_VERSION="${MAJOR}.${MINOR}.${NEW_PATCH}"
-          echo "🚀 Nova versão: $NEW_VERSION"
+          sed -i "0,/<version>.*<\/version>/s//<version>${NOVA_VERSAO}<\/version>/" pom.xml
+          echo "🔖 Versão atualizada no pom.xml"
 
-          # Atualizando o pom.xml na branch de origem
-          sed -i "0,/<version>.*<\/version>/s//<version>${NEW_VERSION}<\/version>/" pom.xml
-          grep -m 1 '<version>' pom.xml
-
-          # Comitando e enviando para a branch de origem
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
           git add pom.xml
-          git commit -m "🔖 Bump version to $NEW_VERSION [automated by CI/CD]"
-          git push origin $ORIGIN_BRANCH
+          git commit -m "🔖 Bump version to $NOVA_VERSAO [automated by CI/CD]"
+          git push origin $BRANCH_ATUAL
 
-          ###################################################################
-          # Agora propaga a mesma versão para as demais branches
-          ###################################################################
-          for BRANCH in $TARGET_BRANCHES
-          do
-            # Pula a branch de origem (já foi atualizada)
-            if [ "$BRANCH" = "$ORIGIN_BRANCH" ]; then
-              echo "⚠️ Ignorando branch de origem $BRANCH"
-              continue
-            fi
-
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "🌿 Processando branch: $BRANCH"
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-            git fetch origin $BRANCH
-            git checkout $BRANCH || git checkout -b $BRANCH origin/$BRANCH
-            git pull origin $BRANCH
-
-            # Atualiza o pom.xml com a MESMA nova versão
-            sed -i "0,/<version>.*<\/version>/s//<version>${NEW_VERSION}<\/version>/" pom.xml
-            grep -m 1 '<version>' pom.xml
-
-            git add pom.xml
-            git commit -m "🔖 Bump version to $NEW_VERSION [automated by CI/CD]"
-            git push origin $BRANCH
-
-            echo "✅ Atualização concluída na branch: $BRANCH"
-          done
-
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "✅ Todas as branches foram sincronizadas com a versão: $NEW_VERSION"
+          echo "✅ Versão $NOVA_VERSAO publicada na branch $BRANCH_ATUAL"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
       #########################################################################
@@ -130,16 +89,15 @@ jobs:
       - name: 🚀 Publicar no Anypoint Exchange
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "🌎 Publicando no Anypoint Exchange"
+          echo "🌎 Publicando no Anypoint Exchange - Ambiente: $GITHUB_REF_NAME"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-          echo "📂 Ambiente detectado: $GITHUB_REF_NAME"
 
           mvn deploy --settings .maven/settings.xml -P $GITHUB_REF_NAME -DskipMunitTests \
             -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
             -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
 
           echo "✅ Publicação no Exchange concluída!"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
       #########################################################################
       # Passo 6: Deploy no CloudHub 2.0
@@ -147,13 +105,12 @@ jobs:
       - name: ☁️ Deploy no CloudHub 2.0
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "☁️ Iniciando deploy no CloudHub 2.0"
+          echo "☁️ Iniciando deploy no CloudHub 2.0 - Ambiente: $GITHUB_REF_NAME"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-          echo "📂 Ambiente detectado: $GITHUB_REF_NAME"
 
           mvn deploy --settings .maven/settings.xml -P $GITHUB_REF_NAME -DskipMunitTests -DmuleDeploy \
             -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
             -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
 
-          echo "✅ Deploy no CloudHub 2.0 realizado com sucesso!"
+          echo "✅ Deploy no CloudHub 2.0 concluído com sucesso!"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
