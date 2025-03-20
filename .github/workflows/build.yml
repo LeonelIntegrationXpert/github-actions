@@ -84,6 +84,16 @@ jobs:
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
       #########################################################################
+      # Passo 4: Cache das dependências Maven
+      #########################################################################
+      - name: 📦 Cache de dependências Maven
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      #########################################################################
       # Passo 5: Publicação no Anypoint Exchange
       #########################################################################
       - name: 🚀 Publicar no Anypoint Exchange
