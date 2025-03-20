@@ -35,7 +35,7 @@
     -->
     <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
     <artifactId>github-actions</artifactId>
-    <version>3.2.11</version>
+    <version>3.2.8</version>
     <packaging>mule-application</packaging>
 
     <name>github-actions</name>
@@ -172,7 +172,7 @@
     <repository>
         <id>anypoint-exchange-v3</id>
         <name>Anypoint Exchange v3 (Public)</name>
-        <url>${anypoint.exchange.v3.url}</url>
+        <url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
     </repository>
 
 
@@ -180,7 +180,7 @@
         <repository>
             <id>mulesoft-releases</id>
             <name>MuleSoft Releases Repository</name>
-	    <url>${mulesoft.releases.repo.url}</url>
+			<url>${mulesoft.releases.repo.url}</url>
         </repository>
 
         <!-- Repositório privado / personalizado -->
