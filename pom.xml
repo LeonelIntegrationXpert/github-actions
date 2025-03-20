@@ -130,7 +130,7 @@
         <!-- Exemplo de 'layer' (api, process, system, etc.) -->
         <app.layer>api</app.layer>
         <!-- Concatena: layer-artifactId-version-env -->
-		<app.namingPattern>${project.artifactId}-${app.layer}-${env}</app.namingPattern>
+	<app.namingPattern>${project.artifactId}-${app.layer}-${env}</app.namingPattern>
 
 
         <!-- ================================================== -->
@@ -148,10 +148,6 @@
         <!-- ================================================== -->
         <serverId>Repository</serverId>
         <anypoint.platform.url>https://anypoint.mulesoft.com</anypoint.platform.url>
-        <!-- Propriedade base para qualquer URL do Anypoint -->
-        <base.maven.anypoint.url>https://maven.anypoint.mulesoft.com/api/v3</base.maven.anypoint.url>
-        <!-- URLs derivadas da base -->
-        <private.exchange.url>${base.maven.anypoint.url}/organizations/${project.groupId}/maven</private.exchange.url>
 
         <!-- ================================================== -->
         <!-- = 11. CHAVE / OUTROS VALORES                      = -->
