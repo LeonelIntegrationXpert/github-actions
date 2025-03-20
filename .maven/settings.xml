@@ -11,10 +11,10 @@
      Telefone  : +55 53 99180-4869
     =============================================================================
      Descrição :
-       - Define as credenciais para se conectar ao Anypoint Exchange (via 'servers'),
-         além de perfis (profiles) distintos para ambientes (sandbox, dev, qa, prod).
-       - Cada profile sobrescreve propriedades importantes, como <env>, <region>,
-         <cloudhub.replicas>, etc.
+       - Define as credenciais para se conectar ao Anypoint Exchange (via 'servers').
+       - Cria perfis (profiles) distintos para ambientes (sandbox, dev, qa, prod),
+         sobrescrevendo apenas propriedades essenciais (<env>, <region>, <cloudhub.*>, etc.).
+       - Inclui o ID da organização MuleSoft para compor a URL privada do Exchange.
     =============================================================================
      Referências:
        - Perfis do Maven: https://maven.apache.org/settings.html
@@ -23,42 +23,69 @@
     =============================================================================
   -->
 
+  <!-- ======================================================== -->
+  <!-- Grupos de plugins (necessário para reconhecer Mule)      -->
+  <!-- ======================================================== -->
   <pluginGroups>
     <pluginGroup>org.mule.tools</pluginGroup>
   </pluginGroups>
 
+  <!-- ======================================================== -->
+  <!-- Servidores e credenciais para repositórios do Maven      -->
+  <!-- ======================================================== -->
   <servers>
-    <!-- connected app's required scopes: https://help.salesforce.com/s/articleView?id=001119708&type=1 -->
+    <!-- O connected app deve conter as devidas permissões (scopes). 
+         Ver: https://help.salesforce.com/s/articleView?id=001119708&type=1 -->
     <server>
       <id>Repository</id>
-      <!-- Deve coincidir com o <serverId> configurado no pom.xml -->
+      <!-- Este <id> deve coincidir com o <serverId> no pom.xml -->
       <username>~~~Client~~~</username>
-      <!-- Usamos uma concatenação de client.id e client.secret, no formato `id~?~secret` -->
+      <!-- Usamos concatenação de client.id e client.secret: `id~?~secret` -->
       <password>${client.id}~?~${client.secret}</password>
     </server>
   </servers>
 
-  <!--
-    Definição de perfis (profiles) para ambientes diferentes.
-    Cada profile pode sobrescrever propriedades usadas pelo Maven (ex.: <env>, <region> etc.).
-  -->
+  <!-- ======================================================== -->
+  <!-- Propriedades padrão (podem ser sobrescritas pelos perfis)-->
+  <!-- ======================================================== -->
+  <properties>
+    <!-- ID da organização (conforme Anypoint) -->
+    <anypoint.organization.id>37a4147b-4673-4cb6-b589-358074a13f8c</anypoint.organization.id>
+
+    <!-- URL base do Maven Anypoint -->
+    <base.maven.anypoint.url>https://maven.anypoint.mulesoft.com/api/v3</base.maven.anypoint.url>
+
+    <!-- URL para repositório privado no Exchange (org + groupId real da org) -->
+    <private.exchange.url>${base.maven.anypoint.url}/organizations/${anypoint.organization.id}/maven</private.exchange.url>
+
+    <!-- URL Exchange v3, também pode ser consumida como ${anypoint.exchange.v3.url} -->
+    <anypoint.exchange.v3.url>${base.maven.anypoint.url}/maven</anypoint.exchange.v3.url>
+
+    <!-- Demais propriedades que valem como default para todos os ambientes -->
+    <region>Cloudhub-US-East-2</region>
+    <cloudhub.vcores>0.1</cloudhub.vcores>
+    <cloudhub.replicas>1</cloudhub.replicas>
+    <releaseChannel>EDGE</releaseChannel>
+    <app.runtime>4.9.2</app.runtime>
+    <java.version>17</java.version>
+  </properties>
+
+  <!-- ======================================================== -->
+  <!-- Definição de perfis para diferentes ambientes            -->
+  <!-- ======================================================== -->
   <profiles>
 
     <!-- ============================================ -->
     <!-- Profile 1: sandbox                          -->
     <!-- ============================================ -->
     <profile>
-      <id>Sandbox</id>
+      <id>sandbox</id>
       <properties>
-        <!-- Propriedades específicas do ambiente Sandbox -->
+        <!-- Ambiente Sandbox (exemplo com LTS) -->
         <env>Sandbox</env>
-        <anypoint.exchange.v3.url>${base.maven.anypoint.url}/maven</anypoint.exchange.v3.url>
-        <region>Cloudhub-US-East-2</region>
-        <cloudhub.vcores>0.1</cloudhub.vcores>
-        <cloudhub.replicas>1</cloudhub.replicas>
         <releaseChannel>LTS</releaseChannel>
         <app.runtime>4.6.14</app.runtime>
-	<java.version>8</java.version>
+        <java.version>8</java.version>
       </properties>
     </profile>
 
@@ -68,15 +95,7 @@
     <profile>
       <id>dev</id>
       <properties>
-        <!-- Propriedades específicas do ambiente dev -->
         <env>dev</env>
-	<anypoint.exchange.v3.url>${base.maven.anypoint.url}/maven</anypoint.exchange.v3.url>
-        <region>Cloudhub-US-East-2</region>
-        <cloudhub.vcores>0.1</cloudhub.vcores>
-        <cloudhub.replicas>1</cloudhub.replicas>
-        <releaseChannel>EDGE</releaseChannel>
-        <app.runtime>4.9.2</app.runtime>
-	<java.version>17</java.version>
       </properties>
     </profile>
 
@@ -86,15 +105,7 @@
     <profile>
       <id>qa</id>
       <properties>
-        <!-- Propriedades específicas do ambiente qa -->
         <env>qa</env>
-	<anypoint.exchange.v3.url>${base.maven.anypoint.url}/maven</anypoint.exchange.v3.url>
-        <region>Cloudhub-US-East-2</region>
-        <cloudhub.vcores>0.1</cloudhub.vcores>
-        <cloudhub.replicas>1</cloudhub.replicas>
-        <releaseChannel>EDGE</releaseChannel>
-        <app.runtime>4.9.2</app.runtime>
-	<java.version>17</java.version>
       </properties>
     </profile>
 
@@ -104,23 +115,18 @@
     <profile>
       <id>prod</id>
       <properties>
-        <!-- Propriedades específicas do ambiente prod -->
         <env>prod</env>
-	<anypoint.exchange.v3.url>${base.maven.anypoint.url}/maven</anypoint.exchange.v3.url>
-        <region>Cloudhub-US-East-2</region>
-        <cloudhub.vcores>0.1</cloudhub.vcores>
-        <cloudhub.replicas>1</cloudhub.replicas>
-        <releaseChannel>EDGE</releaseChannel>
-        <app.runtime>4.9.2</app.runtime>
-	<java.version>17</java.version>
       </properties>
     </profile>
 
   </profiles>
 
+  <!-- ======================================================== -->
+  <!-- Ativa automaticamente o perfil 'sandbox'                 -->
+  <!-- (altere aqui se quiser outro como padrão)                -->
+  <!-- ======================================================== -->
   <activeProfiles>
-    <!-- Ativa automaticamente o profile dev (padrão minúsculo) -->
-    <activeProfile>Sandbox</activeProfile>
+    <activeProfile>sandbox</activeProfile>
   </activeProfiles>
 
 </settings>
