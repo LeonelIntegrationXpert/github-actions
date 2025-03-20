@@ -132,7 +132,7 @@
   <!-- (altere aqui se quiser outro como padrão)                -->
   <!-- ======================================================== -->
   <activeProfiles>
-    <activeProfile>sandbox</activeProfile>
+    <activeProfile>dev</activeProfile>
   </activeProfiles>
 
 </settings>
