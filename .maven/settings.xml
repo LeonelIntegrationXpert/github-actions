@@ -106,16 +106,17 @@
 
     <!-- 
       ================================================
-      🧪 Profile 1: sandbox
+      💻 Profile 1: dev
+        - Override de <env> para "dev".
         - Exemplifica sobrescrita de releaseChannel, 
           runtime e Java version, 
           caso queira ambiente isolado de testes.
       ================================================
     -->
     <profile>
-      <id>sandbox</id>
+      <id>dev</id>
       <properties>
-        <env>Sandbox</env>
+        <env>dev</env>
         <releaseChannel>LTS</releaseChannel>
         <app.runtime>4.6.14</app.runtime>
         <java.version>8</java.version>
@@ -124,21 +125,7 @@
 
     <!-- 
       ================================================
-      💻 Profile 2: dev
-        - Override de <env> para "dev".
-        - Demais props (region, vCores) herdam de base.
-      ================================================
-    -->
-    <profile>
-      <id>dev</id>
-      <properties>
-        <env>dev</env>
-      </properties>
-    </profile>
-
-    <!-- 
-      ================================================
-      🛠 Profile 3: qa
+      🛠 Profile 2: qa
         - Override de <env> para "qa".
       ================================================
     -->
@@ -151,7 +138,7 @@
 
     <!-- 
       ================================================
-      🚀 Profile 4: prod
+      🚀 Profile 3: prod
         - Override de <env> para "prod".
       ================================================
     -->
