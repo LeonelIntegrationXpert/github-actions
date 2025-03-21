@@ -18,7 +18,6 @@ on:
       - dev
       - qa
       - prod
-      - main
 
 permissions:
   contents: write
