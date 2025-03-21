@@ -30,27 +30,14 @@
 
     <!-- 
     =============================================================================
-     🔖 (2) Propriedades Gerais
-         🎯 Aqui concentramos valores “hardcoded” que podem variar entre ambientes 
-            ou facilitar manutenção sem impacto nos campos obrigatórios do Maven.
-         🎯 Ajuste ou crie novas propriedades conforme necessidade.
-    =============================================================================
-    -->
-    <properties>
-        <!-- 🌐 URLs e Server IDs (sem causar erro de interpolação) -->
-        <anypoint.exchange.v3.url>https://maven.anypoint.mulesoft.com/api/v3/maven</anypoint.exchange.v3.url>
-    </properties>
-
-    <!-- 
-    =============================================================================
-     🔖 (3) Identificação do Projeto Mule
+     🔖 (2) Identificação do Projeto Mule
          ❗ Esses campos DEVEM ser literais (sem ${}) para evitar erro de resolução.
          ❗ Ajuste conforme sua organização (groupId, artifactId, version).
     =============================================================================
     -->
     <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
     <artifactId>github-actions</artifactId>
-    <version>4.2.6</version>
+    <version>5.1.1</version>
     <packaging>mule-application</packaging>
 
     <!-- 🏷 Nome de exibição e descrição do projeto -->
@@ -62,7 +49,7 @@
 
     <!-- 
     =============================================================================
-     🏛 (4) Herança do Parent POM (`common-pom-parent`)
+     🏛 (3) Herança do Parent POM (`common-pom-parent`)
          ❗ Também precisa de valores literais em groupId, artifactId e version.
          ❗ Centraliza configurações de build, plugins e propriedades do CloudHub.
     =============================================================================
@@ -75,7 +62,7 @@
 
     <!-- 
     =============================================================================
-     🛠 (5) BUILD
+     🛠 (4) BUILD
          - Geralmente deixamos apenas o essencial, pois plugins e configurações 
            já vêm do Parent.
          - Podemos sobrescrever configurações do mule-maven-plugin aqui, se precisar.
@@ -123,7 +110,7 @@
 
     <!-- 
     =============================================================================
-     📦 (6) DEPENDÊNCIAS
+     📦 (5) DEPENDÊNCIAS
          - Graças ao BOM herdado, não precisamos informar versões de cada lib/plugin.
          - Basta definir groupId, artifactId e classifier.
     =============================================================================
@@ -169,7 +156,7 @@
 
     <!-- 
     =============================================================================
-     📚 (7) REPOSITÓRIOS de Plugins e Dependências
+     📚 (6) REPOSITÓRIOS de Plugins e Dependências
          - Em muitos casos, são herdados do Parent. 
          - Aqui podemos sobrescrever ou incluir repositórios customizados.
     =============================================================================
