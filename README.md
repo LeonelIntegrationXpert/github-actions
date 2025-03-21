@@ -53,7 +53,7 @@ Este projeto demonstra como automatizar *builds* e *deploys* de uma aplicação 
 ## 🚀 Sumário
 1. [Descrição Geral](#descrição-geral)  
 2. [Arquitetura e Fluxo Principal](#arquitetura-e-fluxo-principal)  
-3. [Pré-Requisitos](#pré-requisitos)  
+3. [Pré-Requisitos](#-pré-requisitos)  
 4. [Estrutura do Projeto](#estrutura-do-projeto)  
 5. [Como Executar Localmente](#como-executar-localmente)  
 6. [Testes Automatizados (MUnit)](#testes-automatizados-munit)  
