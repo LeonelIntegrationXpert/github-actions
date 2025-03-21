@@ -51,17 +51,21 @@ Este projeto demonstra como automatizar *builds* e *deploys* de uma aplicação 
 ---
 
 ## 🚀 Sumário
-1. [Descrição Geral](#descrição-geral)  
-2. [Arquitetura e Fluxo Principal](#arquitetura-e-fluxo-principal)  
+1. [Descrição Geral](#-descrição-geral)  
+2. [Arquitetura e Fluxo Principal](#%EF%B8%8F-arquitetura-e-fluxo-principal)  
+   - [Exemplo de Fluxo Principal](#exemplo-de-fluxo-principal)
+   - [Ilustração do Fluxo Principal](#ilustração-do-fluxo-principal)
 3. [Pré-Requisitos](#-pré-requisitos)  
-4. [Estrutura do Projeto](#estrutura-do-projeto)  
-5. [Como Executar Localmente](#como-executar-localmente)  
-6. [Testes Automatizados (MUnit)](#testes-automatizados-munit)  
-7. [Pipeline GitHub Actions](#pipeline-github-actions)  
-8. [Deploy no CloudHub 2.0](#deploy-no-cloudhub-20)  
-9. [Configuração de Logs (Log4j2)](#configuração-de-logs-log4j2)  
-10. [Contato](#contato)  
-11. [Referências Oficiais](#referências-oficiais)
+4. [Estrutura do Projeto](#-estrutura-do-projeto)  
+5. [Como Executar Localmente](#-como-executar-localmente)  
+6. [Testes Automatizados (MUnit)](#-testes-automatizados-munit)  
+   - [Ilustração do Fluxo de Testes MUnit](#ilustração-do-fluxo-de-testes-munit)
+7. [Pipeline GitHub Actions](#-pipeline-github-actions)  
+8. [Deploy no CloudHub 2.0](#-deploy-no-cloudhub-20)  
+9. [Configuração de Logs (Log4j2)](#-configuração-de-logs-log4j2)  
+10. [Contato](#-contato)  
+11. [Referências Oficiais](#-referências-oficiais)  
+12. [Conecte-se Comigo](#-conecte-se-comigo)
 
 ---
 
