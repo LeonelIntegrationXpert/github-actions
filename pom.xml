@@ -1,395 +1,206 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-==========================================================================
- MuleSoft Application XML (pom.xml)
-==========================================================================
- Projeto: github-actions
- Autor: Leonel Dorneles Porto
- Email: leoneldornelesporto@outlook.com.br
- Telefone: +55 53 99180-4869
-==========================================================================
- Descrição:
-  - Configuração do projeto MuleSoft com implantação automatizada no CloudHub.
-  - Inclui configuração do plugin Mule Maven, testes com MUnit e cobertura de código.
-  - Padrão de nomes e tags para Visualizer.
-==========================================================================
- Documentação oficial MuleSoft:
- https://docs.mulesoft.com/mule-runtime/4.4/
-==========================================================================
+===============================================================================
+  🚀 MuleSoft Application POM (Child Project)
+===============================================================================
+  🎯 Objetivo:
+    • Demonstrar como herdar configurações do **Parent POM** (`common-pom-parent`).  
+    • Centralizar as versões de dependências via BOM (`common-bom`).  
+    • Configurar build, testes (MUnit) e deploy no CloudHub 2.0 de forma simplificada.
+===============================================================================
+  ✍️  Autor     : Leonel Dorneles Porto  
+  📧  Email     : leoneldornelesporto@outlook.com.br  
+  ☎️  Telefone  : +55 53 99180-4869
+===============================================================================
+  📚 Descrição:
+    - Este POM representa um **projeto Mule** (`mule-application`).
+    - Herda do `common-pom-parent`, que por sua vez herda as versões do `common-bom`.
+    - Assim, só definimos o mínimo (`artifactId`, `version` etc.) e deixamos 
+      toda a lógica de build/test/deploy no Parent.
+===============================================================================
 -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- 📌 (1) Versão do Modelo do POM -->
     <modelVersion>4.0.0</modelVersion>
 
-    <!--
-       Identificação do projeto (GroupId, ArtifactId, Version etc.)
-       Ajuste conforme sua organização ou repositório.
+    <!-- 
+    =============================================================================
+     🔖 (2) Propriedades Gerais
+         🎯 Aqui concentramos valores “hardcoded” que podem variar entre ambientes 
+            ou facilitar manutenção sem impacto nos campos obrigatórios do Maven.
+         🎯 Ajuste ou crie novas propriedades conforme necessidade.
+    =============================================================================
+    -->
+    <properties>
+        <!-- 🌐 URLs e Server IDs (sem causar erro de interpolação) -->
+        <anypoint.exchange.v3.url>https://maven.anypoint.mulesoft.com/api/v3/maven</anypoint.exchange.v3.url>
+    </properties>
+
+    <!-- 
+    =============================================================================
+     🔖 (3) Identificação do Projeto Mule
+         ❗ Esses campos DEVEM ser literais (sem ${}) para evitar erro de resolução.
+         ❗ Ajuste conforme sua organização (groupId, artifactId, version).
+    =============================================================================
     -->
     <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
     <artifactId>github-actions</artifactId>
-    <version>3.1.23</version>
+    <version>3.3.6</version>
     <packaging>mule-application</packaging>
+
+    <!-- 🏷 Nome de exibição e descrição do projeto -->
     <name>github-actions</name>
+    <description>
+      Exemplo de projeto MuleSoft com build e deploy via GitHub Actions, 
+      herda configs do parent-pom.
+    </description>
 
-    <!-- ========================================================= -->
-    <!-- =                 PROPRIEDADES (PROPERTIES)             = -->
-    <!-- ========================================================= -->
-    <properties>
-        <!-- ================================================== -->
-        <!-- = 1. BUILD / ENCODING                            = -->
-        <!-- ================================================== -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>8</java.version>
+    <!-- 
+    =============================================================================
+     🏛 (4) Herança do Parent POM (`common-pom-parent`)
+         ❗ Também precisa de valores literais em groupId, artifactId e version.
+         ❗ Centraliza configurações de build, plugins e propriedades do CloudHub.
+    =============================================================================
+    -->
+    <parent>
+        <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
+        <artifactId>common-pom-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
 
-        <!-- ================================================== -->
-        <!-- = 2. MULE RUNTIME / CHANNEL                      = -->
-        <!-- ================================================== -->
-        <!-- 
-            releaseChannel: define o canal de liberação do runtime Mule.
-            
-            Existem dois principais tipos de releaseChannel disponíveis:
-            
-            1. LTS (Long Term Support)
-               - Indicado para ambientes de Produção, com suporte estendido.
-               - Estável, com menor frequência de atualizações.
-               - Recomendado para APIs críticas, que exigem robustez 
-                 e manutenção de longo prazo.
-               - Exemplos: 4.4.x, 4.6.x, 4.8.x, 4.10.x
-               
-            2. Early Access (EA)
-               - Versões recentes, com novos recursos, mas menor estabilidade.
-               - Recomendado apenas para Dev ou Prototipação.
-               - Uso NÃO recomendado para Produção.
-               - Exemplos: 4.5.x, 4.7.x, 4.9.x, 4.11.x
-            
-            ATENÇÃO:
-            - Sempre alinhar a versão do runtime (<app.runtime>) com 
-              o releaseChannel correspondente.
-            - Exemplos de configurações típicas:
-                <app.runtime>4.6.14</app.runtime>
-                <releaseChannel>LTS</releaseChannel>
-
-                ou
-
-                <app.runtime>4.9.0</app.runtime>
-                <releaseChannel>EA</releaseChannel>
-            
-            Referência Oficial MuleSoft:
-            https://help.mulesoft.com/s/article/MuleSoft-Support-Lifecycle
-        -->
-        <app.runtime>4.6.14</app.runtime>
-        <releaseChannel>LTS</releaseChannel>
-
-        <!-- ================================================== -->
-        <!-- = 3. VERSÕES DE PLUGINS (MULE / MUNIT / CLEAN)    = -->
-        <!-- ================================================== -->
-        <mule.maven.plugin.version>4.4.0</mule.maven.plugin.version>
-        <munit.version>3.2.1</munit.version>
-        <assertions.version>1.0.2</assertions.version>
-        <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
-
-        <!-- ================================================== -->
-        <!-- = 4. VERSÕES DE CONNECTORS (HTTP / SOCKETS)       = -->
-        <!-- ================================================== -->
-        <http.connector.version>1.10.3</http.connector.version>
-        <sockets.connector.version>1.2.5</sockets.connector.version>
-
-        <!-- ================================================== -->
-        <!-- = 5. ENV / CLOUDHUB CONFIG                       = -->
-        <!-- ================================================== -->
-        <env>Sandbox</env>
-        <region>Cloudhub-US-East-2</region>
-        <cloudhub.vcores>0.1</cloudhub.vcores>
-        <cloudhub.replicas>1</cloudhub.replicas>
-        <provider>MC</provider>
-        <generateDefaultPublicUrl>true</generateDefaultPublicUrl>
-
-        <!-- ================================================== -->
-        <!-- = 6. PROPRIEDADES DE API                          = -->
-        <!-- ================================================== -->
-        <api.id>SEU_API_ID</api.id>
-        <api.version>1.0</api.version>
-
-        <!-- ================================================== -->
-        <!-- = 7. PROPRIEDADES DE COBERTURA MUNIT             = -->
-        <!-- ================================================== -->
-        <coverage.runCoverage>true</coverage.runCoverage>
-        <coverage.failBuild>true</coverage.failBuild>
-        <coverage.requiredCoverage>90</coverage.requiredCoverage>
-        <coverage.format.console>console</coverage.format.console>
-        <coverage.format.sonar>sonar</coverage.format.sonar>
-        <coverage.format.json>json</coverage.format.json>
-        <coverage.format.html>html</coverage.format.html>
-
-        <!-- ================================================== -->
-        <!-- = 8. PADRÃO DE NOME PARA A APLICAÇÃO NO CLOUDHUB  = -->
-        <!-- ================================================== -->
-        <!-- Exemplo de 'layer' (api, process, system, etc.) -->
-        <app.layer>api</app.layer>
-        <!-- Concatena: layer-artifactId-version-env -->
-		<app.namingPattern>${project.artifactId}-${app.layer}-${env}</app.namingPattern>
-
-
-        <!-- ================================================== -->
-        <!-- = 9. VISUALIZER TAGS                             = -->
-        <!-- ================================================== -->
-        <!-- 
-            Tags que serão exibidas no Visualizer. 
-            Podem ser múltiplos valores separados por vírgula. Exemplo:
-            "financeiro, v1, leonel-team"
-        -->
-        <visualizer.tags>demonstracao, leonel, api-layer</visualizer.tags>
-
-        <!-- ================================================== -->
-        <!-- = 10. URLS / REPOSITÓRIOS                        = -->
-        <!-- ================================================== -->
-        <serverId>Repository</serverId>
-        <anypoint.platform.url>https://anypoint.mulesoft.com</anypoint.platform.url>
-        <!-- Propriedade base para qualquer URL do Anypoint -->
-        <base.maven.anypoint.url>https://maven.anypoint.mulesoft.com/api/v3</base.maven.anypoint.url>
-        <!-- URLs derivadas da base -->
-        <anypoint.exchange.v3.url>${base.maven.anypoint.url}/maven</anypoint.exchange.v3.url>
-        <private.exchange.url>${base.maven.anypoint.url}/organizations/${project.groupId}/maven</private.exchange.url>
-
-        <!-- ================================================== -->
-        <!-- = 11. CHAVE / OUTROS VALORES                      = -->
-        <!-- ================================================== -->
-        <key>Chave descript aqui...</key>
-
-        <!-- ================================================== -->
-        <!-- = 12. LAYOUTS DE REPOSITÓRIO                      = -->
-        <!-- ================================================== -->
-        <mulesoft-releases.layout>default</mulesoft-releases.layout>
-        <anypoint-exchange-v3.layout>default</anypoint-exchange-v3.layout>
-        <private-exchange-repository.layout>default</private-exchange-repository.layout>
-        <corporate-repository.layout>default</corporate-repository.layout>
-    </properties>
-
-    <!-- ========================================================= -->
-    <!-- =                        BUILD                          = -->
-    <!-- = (Plugins de limpeza, deploy no CloudHub, MUnit etc.)   = -->
-    <!-- ========================================================= -->
+    <!-- 
+    =============================================================================
+     🛠 (5) BUILD
+         - Geralmente deixamos apenas o essencial, pois plugins e configurações 
+           já vêm do Parent.
+         - Podemos sobrescrever configurações do mule-maven-plugin aqui, se precisar.
+    =============================================================================
+    -->
     <build>
-        <!-- Nome final do artefato que será gerado no target -->
+        <!-- 🏷 Nome final do artefato gerado no target -->
         <finalName>${app.namingPattern}</finalName>
-    
-        <plugins>
-            <!--
-                Plugin de limpeza do projeto: faz limpeza das pastas target.
-                https://maven.apache.org/plugins/maven-clean-plugin
-            -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>${maven-clean-plugin.version}</version>
-            </plugin>
 
-            <!--
-                Mule Maven Plugin: responsável por build e deploy no CloudHub 2.0.
-                https://docs.mulesoft.com/mule-runtime/latest/mule-maven-plugin
+        <plugins>
+            <!-- 
+              🍃 Mule Maven Plugin
+                - Responsável por build e deploy no CloudHub.
+                - Configuração principal herdada do Parent POM.
+                - Para sobrescrever (ex.: vCores, workers, environmentName),
+                  adicionar <configuration> específico.
             -->
             <plugin>
                 <groupId>org.mule.tools.maven</groupId>
                 <artifactId>mule-maven-plugin</artifactId>
-                <version>${mule.maven.plugin.version}</version>
                 <extensions>true</extensions>
-                <configuration>
-                    <!-- 'classifier' default para aplicações Mule -->
-                    <classifier>mule-application</classifier>
-
-                    <!-- Configuração específica para CloudHub 2.0 -->
-                    <cloudhub2Deployment>
-                        <!-- Credenciais e destino do deploy -->
-                        <uri>${anypoint.platform.url}</uri>
-                        <provider>${provider}</provider>
-                        <environment>${env}</environment>
-                        <target>${region}</target>
-                        <server>${serverId}</server>
-                        
-                        <!-- Nome da aplicação no padrão 'layer-nomedoprojeto' -->
-                        <applicationName>${app.namingPattern}</applicationName>
-
-                        <!-- Versão do Mule + canal de release (LTS / EA) -->
-                        <muleVersion>${app.runtime}</muleVersion>
-                        <releaseChannel>${releaseChannel}</releaseChannel>
-
-                        <!-- Configurações de escala e Java -->
-                        <replicas>${cloudhub.replicas}</replicas>
-                        <vCores>${cloudhub.vcores}</vCores>
-                        <javaVersion>${java.version}</javaVersion>
-
-                        <!-- Configurações adicionais de deployment -->
-                        <deploymentSettings>
-                            <!-- Gera URL pública automaticamente (opcional) -->
-                            <generateDefaultPublicUrl>${generateDefaultPublicUrl}</generateDefaultPublicUrl>
-
-                            <!-- Exemplo de estratégia de update: rolling ou recreate -->
-                            <updateStrategy>rolling</updateStrategy>
-
-                            <!-- Exemplos de funcionalidades desabilitadas -->
-                            <lastMileSecurity>disabled</lastMileSecurity>
-                            <forwardSslSession>disabled</forwardSslSession>
-                            <disableAmLogForwarding>enabled</disableAmLogForwarding>
-                            <clustered>disabled</clustered>
-                        </deploymentSettings>
-                        
-                        <!-- Serviços integrados (Object Store V2, Secrets Manager etc.) -->
-                        <integrations>
-                          <services>
-                            <objectStoreV2>
-                              <enabled>true</enabled>
-                            </objectStoreV2>
-                          </services>
-                        </integrations>
-
-                        <!-- Propriedades seguras (exemplo de chave) -->
-                        <secureProperties>
-                            <key>${key}</key>
-                        </secureProperties>
-
-                        <!-- 
-                            Propriedades expostas na aplicação (CloudHub),
-                            incluindo Visualizer: anypoint.platform.visualizer.tags
-                            para detecção automática no Anypoint Visualizer.
-                        -->
-                        <properties>
-                            <env>${env}</env>
-                            <api.id>${api.id}</api.id>
-                            <api.version>${api.version}</api.version>
-                            <anypoint.platform.visualizer.tags>${visualizer.tags}</anypoint.platform.visualizer.tags>
-                        </properties>
-                    </cloudhub2Deployment>
-                </configuration>
             </plugin>
 
-            <!--
-                MUnit Maven Plugin: executa testes e gera relatório de cobertura.
-                https://docs.mulesoft.com/munit/3.2/munit-maven-plugin
+            <!-- 
+              📊 MUnit Maven Plugin
+                - Para executar testes e cobertura de código MUnit.
+                - Também herdado do Parent, mas pode ser configurado aqui.
             -->
             <plugin>
                 <groupId>com.mulesoft.munit.tools</groupId>
                 <artifactId>munit-maven-plugin</artifactId>
-                <version>${munit.version}</version>
-                <executions>
-                    <execution>
-                        <!-- Gera testes e relatório de cobertura na fase 'test' -->
-                        <id>test</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>test</goal>
-                            <goal>coverage-report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <coverage>
-                        <!-- Controla se deve rodar cobertura -->
-                        <runCoverage>${coverage.runCoverage}</runCoverage>
-                        <!-- Se falhar ao não atingir o % mínimo, falha build -->
-                        <failBuild>${coverage.failBuild}</failBuild>
-                        <requiredApplicationCoverage>${coverage.requiredCoverage}</requiredApplicationCoverage>
-                        <!-- Formatos de saída do relatório de cobertura -->
-                        <formats>
-                            <format>${coverage.format.console}</format>
-                            <format>${coverage.format.sonar}</format>
-                            <format>${coverage.format.json}</format>
-                            <format>${coverage.format.html}</format>
-                        </formats>
-                    </coverage>
-                </configuration>
+            </plugin>
+
+            <!-- 
+              🔧 Maven Clean Plugin
+                - Para limpeza de diretórios (target/ etc.).
+                - Herdado do Parent/BOM, mas incluído aqui a título de documentação.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
 
-    <!-- ========================================================= -->
-    <!-- =                   DEPENDÊNCIAS                        = -->
-    <!-- =      (Mule, MUnit, HTTP Connector, Sockets etc.)     = -->
-    <!-- ========================================================= -->
+    <!-- 
+    =============================================================================
+     📦 (6) DEPENDÊNCIAS
+         - Graças ao BOM herdado, não precisamos informar versões de cada lib/plugin.
+         - Basta definir groupId, artifactId e classifier.
+    =============================================================================
+    -->
     <dependencies>
-        <!-- Assertions para DataWeave (usadas em testes MUnit) -->
+        <!-- 🧪 Assertions para DataWeave (MUnit) -->
         <dependency>
             <groupId>org.mule.weave</groupId>
             <artifactId>assertions</artifactId>
-            <version>${assertions.version}</version>
             <scope>test</scope>
         </dependency>
 
-        <!-- Ferramentas do MUnit (mule-plugin) -->
+        <!-- 🧩 Ferramentas do MUnit (mule-plugin) -->
         <dependency>
             <groupId>com.mulesoft.munit</groupId>
             <artifactId>munit-tools</artifactId>
-            <version>${munit.version}</version>
             <classifier>mule-plugin</classifier>
             <scope>test</scope>
         </dependency>
 
-        <!-- Conector HTTP para Mule 4 -->
+        <!-- 🌐 Conector HTTP para Mule 4 -->
         <dependency>
             <groupId>org.mule.connectors</groupId>
             <artifactId>mule-http-connector</artifactId>
-            <version>${http.connector.version}</version>
             <classifier>mule-plugin</classifier>
         </dependency>
 
-        <!-- Runner do MUnit (mule-plugin) -->
+        <!-- 🏃 Runner do MUnit (mule-plugin) -->
         <dependency>
             <groupId>com.mulesoft.munit</groupId>
             <artifactId>munit-runner</artifactId>
-            <version>${munit.version}</version>
             <classifier>mule-plugin</classifier>
             <scope>test</scope>
         </dependency>
 
-        <!-- Conector de Sockets (opcional) -->
+        <!-- 💻 Conector de Sockets (opcional) -->
         <dependency>
             <groupId>org.mule.connectors</groupId>
             <artifactId>mule-sockets-connector</artifactId>
-            <version>${sockets.connector.version}</version>
             <classifier>mule-plugin</classifier>
         </dependency>
     </dependencies>
 
-    <!-- ========================================================= -->
-    <!-- =               PLUGIN REPOSITORIES                     = -->
-    <!-- = (Onde o Maven busca plugins específicos, ex: Mule)    = -->
-    <!-- ========================================================= -->
+    <!-- 
+    =============================================================================
+     📚 (7) REPOSITÓRIOS de Plugins e Dependências
+         - Em muitos casos, são herdados do Parent. 
+         - Aqui podemos sobrescrever ou incluir repositórios customizados.
+    =============================================================================
+    -->
     <pluginRepositories>
         <pluginRepository>
             <id>mulesoft-releases</id>
             <name>MuleSoft Releases Repository</name>
-            <layout>${mulesoft-releases.layout}</layout>
-            <url>https://repository.mulesoft.org/releases/</url>
+            <url>${mulesoft.releases.repo.url}</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
 
-    <!-- ========================================================= -->
-    <!-- =                   REPOSITORIES                        = -->
-    <!-- = (Onde o Maven busca dependências)                    = -->
-    <!-- ========================================================= -->
     <repositories>
-        <!-- Repositório padrão do Anypoint Exchange -->
+        <!-- 🌍 Repositório Público do Anypoint Exchange v3 -->
         <repository>
             <id>anypoint-exchange-v3</id>
-            <name>Anypoint Exchange</name>
+            <name>Anypoint Exchange v3 (Public)</name>
             <url>${anypoint.exchange.v3.url}</url>
-            <layout>${anypoint-exchange-v3.layout}</layout>
         </repository>
 
-        <!-- Repositório de releases da MuleSoft -->
+        <!-- 🏢 Repositório de releases da MuleSoft -->
         <repository>
             <id>mulesoft-releases</id>
             <name>MuleSoft Releases Repository</name>
-            <url>https://repository.mulesoft.org/releases/</url>
-            <layout>${mulesoft-releases.layout}</layout>
+            <url>${mulesoft.releases.repo.url}</url>
         </repository>
 
-        <!-- Repositório privado / personalizado -->
+        <!-- 🔐 Repositório Privado / Customizado -->
         <repository>
             <id>${serverId}</id>
             <name>Private Exchange repository</name>
@@ -397,18 +208,5 @@
             <layout>${private-exchange-repository.layout}</layout>
         </repository>
     </repositories>
-
-    <!-- ========================================================= -->
-    <!-- =            DISTRIBUTION MANAGEMENT                    = -->
-    <!-- = (Onde o projeto é publicado/deploy se necessário)    = -->
-    <!-- ========================================================= -->
-    <distributionManagement>
-        <repository>
-            <id>${serverId}</id>
-            <name>Corporate Repository</name>
-            <url>${private.exchange.url}</url>
-            <layout>${corporate-repository.layout}</layout>
-        </repository>
-    </distributionManagement>
 
 </project>
