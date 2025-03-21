@@ -173,7 +173,7 @@
     ========================================================
   -->
   <activeProfiles>
-    <activeProfile>qa</activeProfile>
+    <activeProfile>dev</activeProfile>
   </activeProfiles>
 
 </settings>
