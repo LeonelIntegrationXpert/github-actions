@@ -160,7 +160,7 @@
     ========================================================
   -->
   <activeProfiles>
-    <activeProfile>prod</activeProfile>
+    <activeProfile>dev</activeProfile>
   </activeProfiles>
 
 </settings>
