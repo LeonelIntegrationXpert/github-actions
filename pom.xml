@@ -17,6 +17,8 @@
     - Herda do `common-pom-parent`, que por sua vez herda as versões do `common-bom`.
     - Assim, só definimos o mínimo (`artifactId`, `version` etc.) e deixamos 
       toda a lógica de build/test/deploy no Parent.
+    - Incluímos algumas boas práticas, como o uso de <properties> para centralizar 
+      valores que podem ser sobrescritos sem alterar diretamente as tags principais.
 ===============================================================================
 -->
 
@@ -28,37 +30,75 @@
     <!-- 📌 (1) Versão do Modelo do POM -->
     <modelVersion>4.0.0</modelVersion>
 
+    <!--
+    =============================================================================
+     🔖 (2) PROPRIEDADES GERAIS
+       - Aqui concentramos valores que podem ser reutilizados ou sobrescritos.
+       - Evita “hardcode” espalhado pelo POM.
+       - Ajuste conforme sua organização.
+    =============================================================================
+    -->
+    <properties>
+        <!-- Identificação básica do projeto -->
+        <project.groupId>37a4147b-4673-4cb6-b589-358074a13f8c</project.groupId>
+        <project.artifactId>github-actions</project.artifactId>
+        <project.version>3.2.14</project.version>
+
+        <!-- Versão do Parent POM -->
+        <common-pom-parent.version>1.0.0</common-pom-parent.version>
+
+        <!-- URLs e Server IDs (caso queira manter como propriedades) -->
+        <mulesoft.releases.repo.url>https://repository.mulesoft.org/releases/</mulesoft.releases.repo.url>
+        <private.exchange.url>https://seu-repositorio-privado.com/maven</private.exchange.url>
+        <private-exchange-repository.layout>default</private-exchange-repository.layout>
+        <serverId>meu-server-id</serverId>
+
+        <!-- Nome de deploy (pode ser ajustado para compor o finalName) -->
+        <app.namingPattern>${project.artifactId}</app.namingPattern>
+    </properties>
+
     <!-- 
     =============================================================================
-     🔖 (2) Identificação do Projeto Mule
+     🔖 (3) Identificação do Projeto Mule
+       - Usamos as propriedades definidas acima para evitar duplicações.
+         (groupId, artifactId, version).
        - Ajuste os valores conforme sua organização.
     =============================================================================
     -->
-    <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
-    <artifactId>github-actions</artifactId>
-    <version>3.2.14</version>
+    <groupId>${project.groupId}</groupId>
+    <artifactId>${project.artifactId}</artifactId>
+    <version>${project.version}</version>
     <packaging>mule-application</packaging>
 
     <name>github-actions</name>
-    <description>Exemplo de projeto MuleSoft com build e deploy via GitHub Actions, herda configs do parent-pom.</description>
+    <description>
+      Exemplo de projeto MuleSoft com build e deploy via GitHub Actions, 
+      herda configs do parent-pom. 
+      (Propriedades centralizadas para evitar hardcodes)
+    </description>
 
     <!-- 
     =============================================================================
-     🏛 (3) Herança do Parent POM (`common-pom-parent`)
+     🏛 (4) Herança do Parent POM (`common-pom-parent`)
        - Herda as versões do BOM (`common-bom`).
-       - Configurações de build, plugins e propriedades do CloudHub/Visualizer.
+       - Configurações de build, plugins e propriedades do CloudHub/Visualizer 
+         já vêm prontas do Parent.
+       - Caso precise sobrescrever algo específico (ex.: versão de plugin), 
+         basta adicionar aqui.
     =============================================================================
     -->
     <parent>
-        <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
+        <groupId>${project.groupId}</groupId>
         <artifactId>common-pom-parent</artifactId>
-        <version>1.0.0</version>
+        <version>${common-pom-parent.version}</version>
     </parent>
 
     <!-- 
     =============================================================================
-     🛠 (4) BUILD
-       - Geralmente deixamos apenas o essencial, pois plugins e configurações já vêm do Parent.
+     🛠 (5) BUILD
+       - Geralmente deixamos apenas o essencial, pois plugins e configurações 
+         já vêm do Parent.
+       - Exemplo: finalName, configurações pontuais do Mule Maven Plugin etc.
     =============================================================================
     -->
     <build>
@@ -69,7 +109,8 @@
             <!-- 
                 🍃 Mule Maven Plugin: responsável por build e deploy no CloudHub.
                 Herdamos a configuração do Parent.
-                Se quiser sobrescrever algo (ex.: `vCores`), adiciona <configuration> aqui.
+                Se quiser sobrescrever algo (ex.: vCores, workers, environmentName), 
+                adiciona <configuration> aqui.
             -->
             <plugin>
                 <groupId>org.mule.tools.maven</groupId>
@@ -79,7 +120,8 @@
 
             <!-- 
                 📊 MUnit Maven Plugin: para testes e cobertura.
-                Herdado do Parent, mas pode ser sobrescrito aqui se necessário.
+                Herdado do Parent, mas pode ser sobrescrito aqui se necessário 
+                (ex.: versões específicas ou configuração de relatórios).
             -->
             <plugin>
                 <groupId>com.mulesoft.munit.tools</groupId>
@@ -88,7 +130,7 @@
 
             <!-- 
                 🔧 Maven Clean Plugin: limpeza do projeto.
-                Herdado do Parent/BOM.
+                Herdado do Parent/BOM, mas mantemos aqui para referências.
             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -99,9 +141,10 @@
 
     <!-- 
     =============================================================================
-     📦 (5) DEPENDÊNCIAS
+     📦 (6) DEPENDÊNCIAS
        - Com a BOM importada via Parent, não é necessário informar versões.
-       - Basta definir `groupId`, `artifactId` e `classifier`.
+       - Basta definir `groupId`, `artifactId` e `classifier` (quando necessário).
+       - Todas as versões ficam centralizadas no BOM herdado.
     =============================================================================
     -->
     <dependencies>
@@ -145,9 +188,11 @@
 
     <!-- 
     =============================================================================
-     📚 (6) REPOSITÓRIOS e PLUGIN REPOSITÓRIOS
+     🌎 (7) REPOSITÓRIOS e PLUGIN REPOSITÓRIOS
        - Herdados do Parent BOM/Parent POM por padrão.
-       - Aqui sobrescrevemos, caso necessário.
+       - Aqui sobrescrevemos ou reforçamos, caso necessário.
+       - Se seu settings.xml tiver configuração de <server>, referencie em 
+         <distributionManagement> ou no plugin do Mule Maven.
     =============================================================================
     -->
     <pluginRepositories>
