@@ -50,7 +50,7 @@
     -->
     <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
     <artifactId>github-actions</artifactId>
-    <version>3.3.4</version>
+    <version>3.3.5</version>
     <packaging>mule-application</packaging>
 
     <!-- 🏷 Nome de exibição e descrição do projeto -->
