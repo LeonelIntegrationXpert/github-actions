@@ -189,8 +189,9 @@
         <!-- 🌍 Repositório Público do Anypoint Exchange v3 -->
         <repository>
             <id>anypoint-exchange-v3</id>
-            <name>Anypoint Exchange v3 (Public)</name>
-            <url>${anypoint.exchange.v3.url}</url>
+            <name>Anypoint Exchange</name>
+            <url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
+            <layout>default</layout>
         </repository>
 
         <!-- 🏢 Repositório de releases da MuleSoft -->
