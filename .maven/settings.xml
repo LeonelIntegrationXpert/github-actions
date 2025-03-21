@@ -1,90 +1,120 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+===============================================================================
+  ⚙️ MuleSoft Settings.xml
+===============================================================================
+  📌 Projeto   : github-actions
+  ✍️  Autor     : Leonel Dorneles Porto
+  📧 Email     : leoneldornelesporto@outlook.com.br
+  ☎️  Telefone : +55 53 99180-4869
+===============================================================================
+  📄 Descrição:
+    - 🔐 Define as credenciais para se conectar ao Anypoint Exchange (via <servers>).
+    - 🌐 Cria perfis (profiles) para múltiplos ambientes (sandbox, dev, qa, prod),
+      sobrepondo apenas propriedades específicas (ex.: <env>, <region>, <cloudhub.*>).
+    - 🏢 Pode incluir ID de organização MuleSoft para compor URL privada do Exchange.
+===============================================================================
+  🔗 Referências:
+    - 🗂 Perfis do Maven: https://maven.apache.org/settings.html
+    - 📦 Mule Maven Plugin: https://docs.mulesoft.com/mule-runtime/latest/mule-maven-plugin
+    - 🔑 Connected App Scopes: https://help.salesforce.com/s/articleView?id=001119708&type=1
+===============================================================================
+-->
+
 <settings>
 
-  <!--
-    =============================================================================
-     ⚙️ MuleSoft Settings.xml
-    =============================================================================
-     📌 Projeto   : github-actions
-     ✍️  Autor     : Leonel Dorneles Porto
-     📧 Email     : leoneldornelesporto@outlook.com.br
-     ☎️  Telefone  : +55 53 99180-4869
-    =============================================================================
-     📄 Descrição :
-       - 🔐 Define as credenciais para se conectar ao Anypoint Exchange (via 'servers').
-       - 🌐 Cria perfis (profiles) distintos para ambientes (sandbox, dev, qa, prod),
-         sobrescrevendo apenas propriedades essenciais (<env>, <region>, <cloudhub.*>, etc.).
-       - 🏢 Inclui o ID da organização MuleSoft para compor a URL privada do Exchange.
-    =============================================================================
-     🔗 Referências:
-       - 🗂 Perfis do Maven: https://maven.apache.org/settings.html
-       - 📦 Mule Maven Plugin: https://docs.mulesoft.com/mule-runtime/latest/mule-maven-plugin
-       - 🔑 Connected App Scopes: https://help.salesforce.com/s/articleView?id=001119708&type=1
-    =============================================================================
+  <!-- 
+    ========================================================
+    🧰 Grupos de plugins 
+      Necessário para o Maven reconhecer plugins Mule (ex.: Mule Maven Plugin).
+    ========================================================
   -->
-
-  <!-- ======================================================== -->
-  <!-- 🧰 Grupos de plugins (necessário para reconhecer Mule)   -->
-  <!-- ======================================================== -->
   <pluginGroups>
     <pluginGroup>org.mule.tools</pluginGroup>
   </pluginGroups>
 
-  <!-- ======================================================== -->
-  <!-- 🔐 Servidores e credenciais para repositórios do Maven   -->
-  <!-- ======================================================== -->
+  <!-- 
+    ========================================================
+    🔐 Servidores e credenciais para repositórios do Maven
+      - ID deve coincidir com o <serverId> ou <id> definido no POM (pom.xml).
+      - Uso típico em <distributionManagement> e <repositories>.
+    ========================================================
+  -->
   <servers>
-    <!-- 📝 O connected app deve conter as devidas permissões (scopes).
-         Ver: https://help.salesforce.com/s/articleView?id=001119708&type=1 -->
+    <!-- 
+      📝 Conexão ao repositório "Repository" 
+         (id deve bater com <repository> ou <serverId> no POM)
+      🔑 Exemplo de concatenação: client.id~?~client.secret
+    -->
     <server>
       <id>Repository</id>
-      <!-- 🆔 Este <id> deve coincidir com o <serverId> no pom.xml -->
       <username>~~~Client~~~</username>
-      <!-- 🔑 Usamos concatenação de client.id e client.secret: `id~?~secret` -->
       <password>${client.id}~?~${client.secret}</password>
     </server>
 
-    <!-- 🔗 Server para baixar do Exchange (Repositories) -->
+    <!-- 
+      🔗 Server para baixar do Exchange (anypoint-exchange-v3)
+         Alinhar <id> com o <repository> do POM.
+    -->
     <server>
-      <id>anypoint-exchange-v3</id> <!-- 🔗 Precisa bater com o <repository> do pom.xml -->
-      <username>~~~Client~~~</username> <!-- 🆔 Connected App Client ID -->
-      <password>${client.id}~?~${client.secret}</password> <!-- 🔑 Connected App Client Secret -->
+      <id>anypoint-exchange-v3</id>
+      <username>~~~Client~~~</username>
+      <password>${client.id}~?~${client.secret}</password>
     </server>
   </servers>
 
-  <!-- ======================================================== -->
-  <!-- ⚙️ Propriedades padrão (podem ser sobrescritas pelos perfis) -->
-  <!-- ======================================================== -->
-  <properties>
-    <!-- 🌎 Região padrão do CloudHub -->
-    <region>Cloudhub-US-East-2</region>
-
-    <!-- ⚙️ Recursos padrão -->
-    <cloudhub.vcores>0.1</cloudhub.vcores>
-    <cloudhub.replicas>1</cloudhub.replicas>
-
-    <!-- 🚀 Canal de release -->
-    <releaseChannel>EDGE</releaseChannel>
-
-    <!-- 🐘 Versão do Runtime Mule -->
-    <app.runtime>4.9.2</app.runtime>
-
-    <!-- ☕️ Versão do Java Runtime -->
-    <java.version>17</java.version>
-  </properties>
-
-  <!-- ======================================================== -->
-  <!-- 🌐 Definição de perfis para diferentes ambientes         -->
-  <!-- ======================================================== -->
+  <!-- 
+    ========================================================
+    🌐 Definição de Perfis 
+      - Agrupamos propriedades em perfis para diferentes ambientes (sandbox, dev, qa, prod).
+      - Um perfil "base" com activeByDefault fornece valores iniciais sem warnings.
+    ========================================================
+  -->
   <profiles>
 
-    <!-- ============================================ -->
-    <!-- 🧪 Profile 1: sandbox                       -->
-    <!-- ============================================ -->
+    <!-- 
+      ================================================
+      🔗 Profile Base (Padrão)
+        - Ativado por padrão (activeByDefault).
+        - Contém propriedades gerais e que valem 
+          quando nenhum outro profile sobrescrever.
+      ================================================
+    -->
+    <profile>
+      <id>base</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <!-- 🌎 Região padrão do CloudHub -->
+        <region>Cloudhub-US-East-2</region>
+
+        <!-- ⚙️ Recursos padrão -->
+        <cloudhub.vcores>0.1</cloudhub.vcores>
+        <cloudhub.replicas>1</cloudhub.replicas>
+
+        <!-- 🚀 Canal de release (EDGE, LTS, etc.) -->
+        <releaseChannel>EDGE</releaseChannel>
+
+        <!-- 🐘 Versão do Runtime Mule -->
+        <app.runtime>4.9.2</app.runtime>
+
+        <!-- ☕️ Versão do Java Runtime -->
+        <java.version>17</java.version>
+      </properties>
+    </profile>
+
+    <!-- 
+      ================================================
+      🧪 Profile 1: sandbox
+        - Exemplifica sobrescrita de releaseChannel, 
+          runtime e Java version, 
+          caso queira ambiente isolado de testes.
+      ================================================
+    -->
     <profile>
       <id>sandbox</id>
       <properties>
-        <!-- 🧪 Ambiente Sandbox (exemplo com LTS) -->
         <env>Sandbox</env>
         <releaseChannel>LTS</releaseChannel>
         <app.runtime>4.6.14</app.runtime>
@@ -92,9 +122,13 @@
       </properties>
     </profile>
 
-    <!-- ============================================ -->
-    <!-- 💻 Profile 2: dev                           -->
-    <!-- ============================================ -->
+    <!-- 
+      ================================================
+      💻 Profile 2: dev
+        - Override de <env> para "dev".
+        - Demais props (region, vCores) herdam de base.
+      ================================================
+    -->
     <profile>
       <id>dev</id>
       <properties>
@@ -102,9 +136,12 @@
       </properties>
     </profile>
 
-    <!-- ============================================ -->
-    <!-- 🛠 Profile 3: qa                            -->
-    <!-- ============================================ -->
+    <!-- 
+      ================================================
+      🛠 Profile 3: qa
+        - Override de <env> para "qa".
+      ================================================
+    -->
     <profile>
       <id>qa</id>
       <properties>
@@ -112,9 +149,12 @@
       </properties>
     </profile>
 
-    <!-- ============================================ -->
-    <!-- 🚀 Profile 4: prod                          -->
-    <!-- ============================================ -->
+    <!-- 
+      ================================================
+      🚀 Profile 4: prod
+        - Override de <env> para "prod".
+      ================================================
+    -->
     <profile>
       <id>prod</id>
       <properties>
@@ -124,10 +164,14 @@
 
   </profiles>
 
-  <!-- ======================================================== -->
-  <!-- 🔧 Ativa automaticamente o perfil 'sandbox'              -->
-  <!-- (altere aqui se quiser outro como padrão)                -->
-  <!-- ======================================================== -->
+  <!-- 
+    ========================================================
+    🔧 Ativa automaticamente o perfil "dev"
+      - O "base" já está ativo por padrão (activeByDefault).
+      - O "dev" será ativo em conjunto, 
+        sobrepondo somente <env> = dev ou outra propriedade.
+    ========================================================
+  -->
   <activeProfiles>
     <activeProfile>dev</activeProfile>
   </activeProfiles>
