@@ -247,12 +247,12 @@ Exemplo de formato:
 
 ---
 
-## 💬 Contato
-Para dúvidas, suporte ou sugestões, entre em contato com:
+## 🙌 Contato
 
-- **Leonel Dorneles Porto**  
-  - Email: [leoneldornelesporto@outlook.com.br](mailto:leoneldornelesporto@outlook.com.br)  
-  - Telefone: **+55 53 99180-4869**
+**Leonel Dorneles Porto**  
+📧 [leoneldornelesporto@outlook.com.br](mailto:leoneldornelesporto@outlook.com.br)  
+📱 +55 53 99180-4869  
+🔗 [linkedin.com/in/leonel-dorneles-porto-b88600122](https://www.linkedin.com/in/leonel-dorneles-porto-b88600122)
 
 ---
 
