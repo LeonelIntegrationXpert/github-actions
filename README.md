@@ -305,13 +305,3 @@ Para dúvidas, suporte ou sugestões, entre em contato com:
     alt="Typing SVG Footer"
   />
 </p>
-
----
-
-<!-- 🌊 Rodapé animado com onda -->
-<p align="center">
-  <img 
-    src="https://capsule-render.vercel.app/api?type=waving&color=0:47e3ff,100:147AD6&height=100&section=footer"
-    alt="Footer Wave Animation"
-  />
-</p>
