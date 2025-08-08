@@ -1,0 +1,250 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------< 9d86053c-c394-4e52-b33c-029e02b59822:github-actions >---------
+[INFO] Building github-actions 2.0.4
+[INFO]   from pom.xml
+[INFO] --------------------------[ mule-application ]--------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean-1) @ github-actions ---
+[INFO] Deleting C:\Users\leonel.d.porto\Desktop\Workspace-crefisa\github-actions\target
+[INFO] 
+[INFO] --- mule:4.3.0:clean (default-clean) @ github-actions ---
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ github-actions ---
+[INFO] 
+[INFO] --- mule:4.3.0:validate (default-validate) @ github-actions ---
+[INFO] 
+[INFO] --- mule:4.3.0:initialize (default-initialize) @ github-actions ---
+[INFO] 
+[INFO] --- mule:4.3.0:generate-sources (default-generate-sources) @ github-actions ---
+[INFO] 
+[INFO] --- mule:4.3.0:process-sources (default-process-sources) @ github-actions ---
+[INFO] About to fetch required dependencies for artifact: 9d86053c-c394-4e52-b33c-029e02b59822:github-actions:pom:2.0.4. This may take a while...
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ github-actions ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- mule:4.3.0:process-resources (default-process-resources) @ github-actions ---
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ github-actions ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- mule:4.3.0:compile (default-compile) @ github-actions ---
+[INFO] 
+[INFO] --- mule:4.3.0:process-classes (default-process-classes) @ github-actions ---
+[INFO] About to fetch required dependencies for artifact: eae58e10-7425-11f0-b490-fc5cee6fe438:eae58e10-7425-11f0-b490-fc5cee6fe438:pom:4.7.2. This may take a while...
+[WARNING] Internal plugin library 'org.mule.runtime:mule-api' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-metadata-model-api' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-message-metadata-model' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-artifact-declaration' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-artifact-declaration-persistence' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:api-annotations' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-embedded-api' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-api' is a Mule Runtime dependency. It will not be used by 'munit-tools-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-metadata-model-api' is a Mule Runtime dependency. It will not be used by 'munit-tools-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-message-metadata-model' is a Mule Runtime dependency. It will not be used by 'munit-tools-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-artifact-declaration' is a Mule Runtime dependency. It will not be used by 'munit-tools-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-artifact-declaration-persistence' is a Mule Runtime dependency. It will not be used by 'munit-tools-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:api-annotations' is a Mule Runtime dependency. It will not be used by 'munit-tools-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[INFO] About to fetch required dependencies for artifact: f25b3140-7425-11f0-b490-fc5cee6fe438:f25b3140-7425-11f0-b490-fc5cee6fe438:pom:4.7.2. This may take a while...
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[INFO] About to fetch required dependencies for artifact: f3f691c0-7425-11f0-b490-fc5cee6fe438:f3f691c0-7425-11f0-b490-fc5cee6fe438:pom:4.7.2. This may take a while...
+[WARNING] Internal plugin library 'org.mule.runtime:mule-api' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-metadata-model-api' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-message-metadata-model' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-artifact-declaration' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-artifact-declaration-persistence' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:api-annotations' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-embedded-api' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[INFO] About to fetch required dependencies for artifact: f7456ea0-7425-11f0-b490-fc5cee6fe438:f7456ea0-7425-11f0-b490-fc5cee6fe438:pom:4.7.2. This may take a while...
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[INFO] About to fetch required dependencies for artifact: f7fc89a0-7425-11f0-b490-fc5cee6fe438:f7fc89a0-7425-11f0-b490-fc5cee6fe438:pom:4.7.2. This may take a while...
+[WARNING] Internal plugin library 'org.mule.runtime:mule-api' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-metadata-model-api' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-message-metadata-model' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-artifact-declaration' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-artifact-declaration-persistence' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:api-annotations' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-embedded-api' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-api' is a Mule Runtime dependency. It will not be used by 'munit-tools-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-metadata-model-api' is a Mule Runtime dependency. It will not be used by 'munit-tools-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-message-metadata-model' is a Mule Runtime dependency. It will not be used by 'munit-tools-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-artifact-declaration' is a Mule Runtime dependency. It will not be used by 'munit-tools-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-artifact-declaration-persistence' is a Mule Runtime dependency. It will not be used by 'munit-tools-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:api-annotations' is a Mule Runtime dependency. It will not be used by 'munit-tools-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[INFO] About to fetch required dependencies for artifact: fd8fb130-7425-11f0-b490-fc5cee6fe438:fd8fb130-7425-11f0-b490-fc5cee6fe438:pom:4.7.2. This may take a while...
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[INFO] About to fetch required dependencies for artifact: fecac940-7425-11f0-b490-fc5cee6fe438:fecac940-7425-11f0-b490-fc5cee6fe438:pom:4.7.2. This may take a while...
+[WARNING] Internal plugin library 'org.mule.runtime:mule-api' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-metadata-model-api' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-message-metadata-model' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-artifact-declaration' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-artifact-declaration-persistence' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:api-annotations' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[WARNING] Internal plugin library 'org.mule.runtime:mule-embedded-api' is a Mule Runtime dependency. It will not be used by 'munit-runner-3.2.1-mule-plugin.jar' in order to avoid classloading issues. Please consider removing it, or at least not putting it with 'compile' scope.
+[INFO] About to fetch required dependencies for artifact: 0314a7f0-7426-11f0-b490-fc5cee6fe438:0314a7f0-7426-11f0-b490-fc5cee6fe438:pom:4.7.2. This may take a while...
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[WARNING] A Keys Resolver is being defined without defining an Output Resolver, Input Resolver nor Attributes Resolver
+[INFO] 
+[INFO] --- mule:4.3.0:generate-test-sources (default-generate-test-sources) @ github-actions ---
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ github-actions ---
+[INFO] Copying 3 resources from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- mule:4.3.0:generate-test-resources (default-generate-test-resources) @ github-actions ---
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ github-actions ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- mule:4.3.0:test-compile (default-test-compile) @ github-actions ---
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-test) @ github-actions ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- munit:3.2.1:test (test) @ github-actions ---
+[INFO] Run of munit-maven-plugin skipped. Property [skipTests] was set to true
+[INFO] 
+[INFO] >>> munit:3.2.1:coverage-report (test) > [munit]test @ github-actions >>>
+[INFO] 
+[INFO] --- mule:4.3.0:validate (default-validate) @ github-actions ---
+[INFO] 
+[INFO] --- mule:4.3.0:initialize (default-initialize) @ github-actions ---
+[INFO] 
+[INFO] --- mule:4.3.0:generate-sources (default-generate-sources) @ github-actions ---
+[INFO] 
+[INFO] --- mule:4.3.0:process-sources (default-process-sources) @ github-actions ---
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ github-actions ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- mule:4.3.0:process-resources (default-process-resources) @ github-actions ---
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ github-actions ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- mule:4.3.0:compile (default-compile) @ github-actions ---
+[INFO] 
+[INFO] --- mule:4.3.0:process-classes (default-process-classes) @ github-actions ---
+[INFO] 
+[INFO] --- mule:4.3.0:generate-test-sources (default-generate-test-sources) @ github-actions ---
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ github-actions ---
+[INFO] Copying 3 resources from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- mule:4.3.0:generate-test-resources (default-generate-test-resources) @ github-actions ---
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ github-actions ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- mule:4.3.0:test-compile (default-test-compile) @ github-actions ---
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-test) @ github-actions ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- munit:3.2.1:test (test) @ github-actions ---
+[INFO] Run of munit-maven-plugin skipped. Property [skipTests] was set to true
+[INFO] 
+[INFO] <<< munit:3.2.1:coverage-report (test) < [munit]test @ github-actions <<<
+[INFO] 
+[INFO] 
+[INFO] --- munit:3.2.1:coverage-report (test) @ github-actions ---
+[INFO] 
+[INFO] --- mule:4.3.0:package (default-package) @ github-actions ---
+[INFO] Building zip: C:\Users\leonel.d.porto\Desktop\Workspace-crefisa\github-actions\target\github-actions-api-dev-mule-application.jar
+[INFO] 
+[INFO] --- mule:4.3.0:verify (default-verify) @ github-actions ---
+[INFO] 
+[INFO] --- install:3.1.1:install (default-install) @ github-actions ---
+[INFO] Installing C:\Users\leonel.d.porto\Desktop\Workspace-crefisa\github-actions\pom.xml to C:\Users\leonel.d.porto\.m2\repository\9d86053c-c394-4e52-b33c-029e02b59822\github-actions\2.0.4\github-actions-2.0.4.pom
+[INFO] Installing C:\Users\leonel.d.porto\Desktop\Workspace-crefisa\github-actions\target\github-actions-api-dev-mule-application.jar to C:\Users\leonel.d.porto\.m2\repository\9d86053c-c394-4e52-b33c-029e02b59822\github-actions\2.0.4\github-actions-2.0.4-mule-application.jar
+[INFO] 
+[INFO] --- exchange-mule:0.0.23:exchange-pre-deploy (default-exchange-pre-deploy) @ github-actions ---
+[INFO] 
+[INFO] --- deploy:3.1.1:deploy (default-deploy) @ github-actions ---
+[INFO] Uploading to Repository: https://maven.anypoint.mulesoft.com/api/v2/organizations/9d86053c-c394-4e52-b33c-029e02b59822/maven/9d86053c-c394-4e52-b33c-029e02b59822/github-actions/2.0.4/github-actions-2.0.4.pom
+[INFO] Uploading to Repository: https://maven.anypoint.mulesoft.com/api/v2/organizations/9d86053c-c394-4e52-b33c-029e02b59822/maven/9d86053c-c394-4e52-b33c-029e02b59822/github-actions/2.0.4/github-actions-2.0.4-mule-application.jar
+[WARNING] Failed to upload checksum to 9d86053c-c394-4e52-b33c-029e02b59822/github-actions/2.0.4/github-actions-2.0.4-mule-application.jar.sha1
+org.apache.http.client.HttpResponseException: status code: 400, reason phrase: Bad Request (400)
+    at org.eclipse.aether.transport.http.HttpTransporter.handleStatus (HttpTransporter.java:619)
+    at org.eclipse.aether.transport.http.HttpTransporter.execute (HttpTransporter.java:488)
+    at org.eclipse.aether.transport.http.HttpTransporter.implPut (HttpTransporter.java:469)
+    at org.eclipse.aether.spi.connector.transport.AbstractTransporter.put (AbstractTransporter.java:107)
+    at org.eclipse.aether.connector.basic.BasicRepositoryConnector$PutTaskRunner.uploadChecksum (BasicRepositoryConnector.java:608)
+    at org.eclipse.aether.connector.basic.BasicRepositoryConnector$PutTaskRunner.uploadChecksums (BasicRepositoryConnector.java:591)
+    at org.eclipse.aether.connector.basic.BasicRepositoryConnector$PutTaskRunner.runTask (BasicRepositoryConnector.java:565)
+    at org.eclipse.aether.connector.basic.BasicRepositoryConnector$TaskRunner.run (BasicRepositoryConnector.java:414)
+    at org.eclipse.aether.util.concurrency.RunnableErrorForwarder.lambda$wrap$0 (RunnableErrorForwarder.java:66)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1149)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run (ThreadPoolExecutor.java:624)
+    at java.lang.Thread.run (Thread.java:750)
+[WARNING] Failed to upload checksum to 9d86053c-c394-4e52-b33c-029e02b59822/github-actions/2.0.4/github-actions-2.0.4-mule-application.jar.md5
+org.apache.http.client.HttpResponseException: status code: 400, reason phrase: Bad Request (400)
+    at org.eclipse.aether.transport.http.HttpTransporter.handleStatus (HttpTransporter.java:619)
+    at org.eclipse.aether.transport.http.HttpTransporter.execute (HttpTransporter.java:488)
+    at org.eclipse.aether.transport.http.HttpTransporter.implPut (HttpTransporter.java:469)
+    at org.eclipse.aether.spi.connector.transport.AbstractTransporter.put (AbstractTransporter.java:107)
+    at org.eclipse.aether.connector.basic.BasicRepositoryConnector$PutTaskRunner.uploadChecksum (BasicRepositoryConnector.java:608)
+    at org.eclipse.aether.connector.basic.BasicRepositoryConnector$PutTaskRunner.uploadChecksums (BasicRepositoryConnector.java:591)
+    at org.eclipse.aether.connector.basic.BasicRepositoryConnector$PutTaskRunner.runTask (BasicRepositoryConnector.java:565)
+    at org.eclipse.aether.connector.basic.BasicRepositoryConnector$TaskRunner.run (BasicRepositoryConnector.java:414)
+    at org.eclipse.aether.util.concurrency.RunnableErrorForwarder.lambda$wrap$0 (RunnableErrorForwarder.java:66)
+    at java.util.concurrent.ThreadPoolExecutor.runWorker (ThreadPoolExecutor.java:1149)
+    at java.util.concurrent.ThreadPoolExecutor$Worker.run (ThreadPoolExecutor.java:624)
+    at java.lang.Thread.run (Thread.java:750)
+[INFO] Uploaded to Repository: https://maven.anypoint.mulesoft.com/api/v2/organizations/9d86053c-c394-4e52-b33c-029e02b59822/maven/9d86053c-c394-4e52-b33c-029e02b59822/github-actions/2.0.4/github-actions-2.0.4-mule-application.jar (2.4 MB at 891 kB/s)
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  01:32 min
+[INFO] Finished at: 2025-08-08T04:05:24-03:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-deploy-plugin:3.1.1:deploy (default-deploy) on project github-actions: Failed to deploy artifacts: Could not transfer artifact 9d86053c-c394-4e52-b33c-029e02b59822:github-actions:pom:2.0.4 from/to Repository (https://maven.anypoint.mulesoft.com/api/v2/organizations/9d86053c-c394-4e52-b33c-029e02b59822/maven): status code: 409, reason phrase: Conflict (409) -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

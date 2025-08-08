@@ -1,0 +1,21 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------< 9d86053c-c394-4e52-b33c-029e02b59822:github-actions >---------
+[INFO] Building github-actions 2.0.5
+[INFO]   from pom.xml
+[INFO] --------------------------[ mule-application ]--------------------------
+[INFO] 
+[INFO] --- mule:4.3.0:deploy (default-cli) @ github-actions ---
+[INFO] No application configured. Using project artifact: null
+[INFO] Deploying artifact github-actions
+[INFO] Starting deployment to Cloudhub-US-East-2
+[INFO] Deploying github-actions
+[INFO] Redeploying...
+[INFO] Checking if application: github-actions has started
+[INFO] Artifact github-actions deployed
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  02:48 min
+[INFO] Finished at: 2025-08-08T04:10:53-03:00
+[INFO] ------------------------------------------------------------------------
