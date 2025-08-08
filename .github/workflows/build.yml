@@ -14,112 +14,108 @@ name: Publish to Exchange & Deploy to CH2.0
 
 on:
   push:
-    branches: 
-      - dev
-      - qa
-      - prod
+    branches: [ dev, qa, prod ]
+
+# Evita rodadas concorrentes na mesma branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
+
+    env:
+      # ========= Config comum =========
+      SETTINGS_FILE: .maven/settings.xml
+      SERVER_ID: Repository
+      ENV_NAME: ${{ github.ref_name }}                   # dev | qa | prod (igual ao nome da branch)
+      TARGET: CloudHub-US-East-2                         # respeita o case do CH2.0
+      BUSINESS_GROUP_ID: 9d86053c-c394-4e52-b33c-029e02b59822
+      # Overrides úteis (mantém padrão 4.9.0 / Java 17 e EDGE)
+      MULE_VERSION: "4.9.0"
+      JAVA_VERSION: "17"
+      RELEASE_CHANNEL: "EDGE"
+
+      # Credenciais (sempre por secrets)
+      ANYPOINT_CLIENT_ID: ${{ secrets.CONNECTED_APP_CLIENT_ID }}
+      ANYPOINT_CLIENT_SECRET: ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
 
     steps:
       #########################################################################
-      # Passo 1: Checkout do repositório
+      # 1) Checkout
       #########################################################################
       - name: 📥 Checkout do repositório
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # necessário para obter todo o histórico da branch
+          fetch-depth: 0
 
       #########################################################################
-      # Passo 2: Configurar JDK 17
+      # 2) JDK 17 + cache Maven nativo
       #########################################################################
-      - name: ☕ Configurando JDK 17
+      - name: ☕ Configurando JDK 17 (com cache Maven)
         uses: actions/setup-java@v4
         with:
           distribution: "zulu"
-          java-version: 17
+          java-version: "17"
+          cache: "maven"
 
       #########################################################################
-      # Passo 3: Incrementar a versão do projeto na branch atual
+      # 3) (Opcional) Go-offline para aquecer o cache e evitar "present but unavailable"
+      #########################################################################
+      - name: ⚡ Pré-download de dependências (go-offline)
+        run: mvn -B -U -q -s "$SETTINGS_FILE" -P "$ENV_NAME" \
+               -Dclient.id="$ANYPOINT_CLIENT_ID" -Dclient.secret="$ANYPOINT_CLIENT_SECRET" \
+               dependency:go-offline || true
+
+      #########################################################################
+      # 4) Bump de versão só na branch atual (com [skip ci] p/ evitar loop)
       #########################################################################
       - name: 🔖 Incrementar versão do pom.xml (apenas branch atual)
+        if: ${{ github.actor != 'github-actions[bot]' }}  # evita loop
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "🚀 Início do incremento de versão"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🌿 Branch atual: $ENV_NAME"
+          echo "🔍 Lendo versão atual do POM"
+          CURR_VER=$(mvn -q -DforceStdout help:evaluate -Dexpression=project.version)
+          echo "📌 Versão atual: $CURR_VER"
 
-          BRANCH_ATUAL=$GITHUB_REF_NAME
-          echo "🌿 Branch atual: $BRANCH_ATUAL"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURR_VER"
+          NEW_VER="${MAJOR}.${MINOR}.$((PATCH + 1))"
+          echo "🚀 Nova versão: $NEW_VER"
 
-          git fetch origin $BRANCH_ATUAL
-          git checkout $BRANCH_ATUAL || git checkout -b $BRANCH_ATUAL origin/$BRANCH_ATUAL
-          git pull origin $BRANCH_ATUAL
+          mvn -B -q versions:set -DnewVersion="$NEW_VER"
+          mvn -B -q versions:commit
 
-          echo "🔍 Buscando versão atual no pom.xml"
-          VERSAO_ATUAL=$(grep -m 1 '<version>' pom.xml | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
-          echo "📌 Versão atual: $VERSAO_ATUAL"
-
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSAO_ATUAL"
-          NOVO_PATCH=$((PATCH + 1))
-          NOVA_VERSAO="${MAJOR}.${MINOR}.${NOVO_PATCH}"
-          echo "🚀 Nova versão: $NOVA_VERSAO"
-
-          sed -i "0,/<version>.*<\/version>/s//<version>${NOVA_VERSAO}<\/version>/" pom.xml
-          echo "🔖 Versão atualizada no pom.xml"
-
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add pom.xml
-          git commit -m "🔖 Bump version to $NOVA_VERSAO [automated by CI/CD]"
-          git push origin $BRANCH_ATUAL
-
-          echo "✅ Versão $NOVA_VERSAO publicada na branch $BRANCH_ATUAL"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          git commit -m "🔖 Bump version to $NEW_VER [skip ci]"
+          git push origin "$ENV_NAME"
 
       #########################################################################
-      # Passo 4: Cache das dependências Maven
+      # 5) Build + Publish Exchange + Deploy CloudHub (um único comando)
       #########################################################################
-      - name: 📦 Cache de dependências Maven
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
-
-      #########################################################################
-      # Passo 5: Publicação no Anypoint Exchange
-      #########################################################################
-      - name: 🚀 Publicar no Anypoint Exchange
+      - name: 🚀 Publish to Exchange & ☁️ Deploy CH2.0
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "🌎 Publicando no Anypoint Exchange - Ambiente: $GITHUB_REF_NAME"
+          echo "🌎 Ambiente: $ENV_NAME | 🎯 Target: $TARGET"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-          mvn deploy --settings .maven/settings.xml -P $GITHUB_REF_NAME -DskipMunitTests \
-            -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
-            -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
+          mvn -B -U -s "$SETTINGS_FILE" -P "$ENV_NAME" \
+             clean deploy mule:deploy \
+             -DskipTests -DskipITs -DskipMunitTests \
+             -Dclient.id="$ANYPOINT_CLIENT_ID" \
+             -Dclient.secret="$ANYPOINT_CLIENT_SECRET" \
+             -DserverId="$SERVER_ID" -Dserver="$SERVER_ID" \
+             -Denv="$ENV_NAME" -Denvironment="$ENV_NAME" \
+             -Dtarget="$TARGET" -Dregion="$TARGET" \
+             -DbusinessGroupId="$BUSINESS_GROUP_ID" \
+             -Dapp.runtime="$MULE_VERSION" -DmuleVersion="$MULE_VERSION" \
+             -Djava.version="$JAVA_VERSION" \
+             -DreleaseChannel="$RELEASE_CHANNEL"
 
-          echo "✅ Publicação no Exchange concluída!"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-      #########################################################################
-      # Passo 6: Deploy no CloudHub 2.0
-      #########################################################################
-      - name: ☁️ Deploy no CloudHub 2.0
-        run: |
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "☁️ Iniciando deploy no CloudHub 2.0 - Ambiente: $GITHUB_REF_NAME"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-          mvn deploy --settings .maven/settings.xml -P $GITHUB_REF_NAME -DskipMunitTests -DmuleDeploy \
-            -Dclient.id="${{ secrets.CONNECTED_APP_CLIENT_ID }}" \
-            -Dclient.secret="${{ secrets.CONNECTED_APP_CLIENT_SECRET }}"
-
-          echo "✅ Deploy no CloudHub 2.0 concluído com sucesso!"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ Exchange publicado e CH2.0 deployado com sucesso!"
