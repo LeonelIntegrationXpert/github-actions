@@ -48,38 +48,57 @@ jobs:
       # Passo 3: Incrementar a versão do projeto na branch atual
       #########################################################################
       - name: 🔖 Incrementar versão do pom.xml (apenas branch atual)
+        if: ${{ github.actor != 'github-actions[bot]' }}  # evita loop de commit do bot
+        env:
+          SETTINGS_FILE: .maven/settings.xml
+          ENV_NAME: ${{ github.ref_name }}                 # dev | qa | prod
+          ANYPOINT_CLIENT_ID: ${{ secrets.CONNECTED_APP_CLIENT_ID }}
+          ANYPOINT_CLIENT_SECRET: ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "🚀 Início do incremento de versão"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🌿 Branch atual: $ENV_NAME"
+          echo "🔍 Lendo versão atual do POM via Maven (com settings e credenciais)"
 
-          BRANCH_ATUAL=$GITHUB_REF_NAME
-          echo "🌿 Branch atual: $BRANCH_ATUAL"
+          # tenta pelo Maven (precisa resolver parent/BOM do Exchange)
+          set +e
+          CURR_VER=$(mvn -B -U -q \
+            -s "$SETTINGS_FILE" -P "$ENV_NAME" \
+            -Dclient.id="$ANYPOINT_CLIENT_ID" \
+            -Dclient.secret="$ANYPOINT_CLIENT_SECRET" \
+            -DforceStdout help:evaluate -Dexpression=project.version 2>/dev/null | tail -n1)
+          RC=$?
+          set -e
 
-          git fetch origin $BRANCH_ATUAL
-          git checkout $BRANCH_ATUAL || git checkout -b $BRANCH_ATUAL origin/$BRANCH_ATUAL
-          git pull origin $BRANCH_ATUAL
+          if [ $RC -ne 0 ] || [ -z "$CURR_VER" ]; then
+            echo "⚠️  Maven help:evaluate falhou. Usando fallback por grep no pom.xml…"
+            CURR_VER=$(grep -m1 -E '^\s*<version>[^<]+' pom.xml | sed -E 's/.*<version>([^<]+)<\/version>.*/\1/')
+          fi
 
-          echo "🔍 Buscando versão atual no pom.xml"
-          VERSAO_ATUAL=$(grep -m 1 '<version>' pom.xml | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
-          echo "📌 Versão atual: $VERSAO_ATUAL"
+          if [ -z "$CURR_VER" ]; then
+            echo "❌ Não consegui determinar a versão atual."
+            exit 1
+          fi
 
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSAO_ATUAL"
-          NOVO_PATCH=$((PATCH + 1))
-          NOVA_VERSAO="${MAJOR}.${MINOR}.${NOVO_PATCH}"
-          echo "🚀 Nova versão: $NOVA_VERSAO"
+          echo "📌 Versão atual: $CURR_VER"
 
-          sed -i "0,/<version>.*<\/version>/s//<version>${NOVA_VERSAO}<\/version>/" pom.xml
-          echo "🔖 Versão atualizada no pom.xml"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURR_VER"
+          NEW_VER="${MAJOR}.${MINOR}.$((PATCH + 1))"
+          echo "🚀 Nova versão: $NEW_VER"
 
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
+          # aplica nova versão usando o plugin versions (com settings e credenciais também)
+          mvn -B -U -q \
+            -s "$SETTINGS_FILE" -P "$ENV_NAME" \
+            -Dclient.id="$ANYPOINT_CLIENT_ID" \
+            -Dclient.secret="$ANYPOINT_CLIENT_SECRET" \
+            versions:set -DnewVersion="$NEW_VER"
+          mvn -q versions:commit
 
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add pom.xml
-          git commit -m "🔖 Bump version to $NOVA_VERSAO [automated by CI/CD]"
-          git push origin $BRANCH_ATUAL
-
-          echo "✅ Versão $NOVA_VERSAO publicada na branch $BRANCH_ATUAL"
+          git commit -m "🔖 Bump version to $NEW_VER [skip ci]" || echo "ℹ️ Nada para commitar"
+          git push origin "$ENV_NAME" || echo "ℹ️ Push ignorado (sem mudanças)"
+          echo "✅ Versão $NEW_VER publicada na branch $ENV_NAME"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
       #########################################################################
