@@ -4,197 +4,195 @@
   🚀 MuleSoft Application POM (Child Project)
 ===============================================================================
   🎯 Objetivo:
-    • Demonstrar como herdar configurações do **Parent POM** (`common-pom-parent`).  
-    • Centralizar as versões de dependências via BOM (`common-bom`).  
-    • Configurar build, testes (MUnit) e deploy no CloudHub 2.0 de forma simplificada.
+	• Demonstrar como herdar configurações do **Parent POM** (`common-pom-parent`).  
+	• Centralizar as versões de dependências via BOM (`common-bom`).  
+	• Configurar build, testes (MUnit) e deploy no CloudHub 2.0 de forma simplificada.
 ===============================================================================
   ✍️  Autor     : Leonel Dorneles Porto  
   📧  Email     : leoneldornelesporto@outlook.com.br  
   ☎️  Telefone  : +55 53 99180-4869
 ===============================================================================
   📚 Descrição:
-    - Este POM representa um **projeto Mule** (`mule-application`).
-    - Herda do `common-pom-parent`, que por sua vez herda as versões do `common-bom`.
-    - Assim, só definimos o mínimo (`artifactId`, `version` etc.) e deixamos 
-      toda a lógica de build/test/deploy no Parent.
+	- Este POM representa um **projeto Mule** (`mule-application`).
+	- Herda do `common-pom-parent`, que por sua vez herda as versões do `common-bom`.
+	- Assim, só definimos o mínimo (`artifactId`, `version` etc.) e deixamos 
+	  toda a lógica de build/test/deploy no Parent.
 ===============================================================================
--->
+--><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                               https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<!-- 📌 (1) Versão do Modelo do POM -->
+	<modelVersion>4.0.0</modelVersion>
 
-    <!-- 📌 (1) Versão do Modelo do POM -->
-    <modelVersion>4.0.0</modelVersion>
+	<!-- 
+	=============================================================================
+	 🔖 (2) Identificação do Projeto Mule
+		 ❗ Esses campos DEVEM ser literais (sem ${}) para evitar erro de resolução.
+		 ❗ Ajuste conforme sua organização (groupId, artifactId, version).
+	=============================================================================
+	-->
+	<groupId>9d86053c-c394-4e52-b33c-029e02b59822</groupId>
+	<artifactId>github-actions</artifactId>
+	<version>2.0.5</version>
+	<packaging>mule-application</packaging>
 
-    <!-- 
-    =============================================================================
-     🔖 (2) Identificação do Projeto Mule
-         ❗ Esses campos DEVEM ser literais (sem ${}) para evitar erro de resolução.
-         ❗ Ajuste conforme sua organização (groupId, artifactId, version).
-    =============================================================================
-    -->
-    <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
-    <artifactId>github-actions</artifactId>
-    <version>5.1.6</version>
-    <packaging>mule-application</packaging>
+	<!-- 🏷 Nome de exibição e descrição do projeto -->
+	<name>github-actions</name>
+	<description>
+	  Exemplo de projeto MuleSoft com build e deploy via GitHub Actions, 
+	  herda configs do parent-pom.
+	</description>
 
-    <!-- 🏷 Nome de exibição e descrição do projeto -->
-    <name>github-actions</name>
-    <description>
-      Exemplo de projeto MuleSoft com build e deploy via GitHub Actions, 
-      herda configs do parent-pom.
-    </description>
+	<!-- 
+	=============================================================================
+	 🏛 (3) Herança do Parent POM (`common-pom-parent`)
+		 ❗ Também precisa de valores literais em groupId, artifactId e version.
+		 ❗ Centraliza configurações de build, plugins e propriedades do CloudHub.
+	=============================================================================
+	-->
+	<parent>
+		<groupId>9d86053c-c394-4e52-b33c-029e02b59822</groupId>
+		<artifactId>common-pom-parent</artifactId>
+		<version>1.0.0</version>
+	</parent>
 
-    <!-- 
-    =============================================================================
-     🏛 (3) Herança do Parent POM (`common-pom-parent`)
-         ❗ Também precisa de valores literais em groupId, artifactId e version.
-         ❗ Centraliza configurações de build, plugins e propriedades do CloudHub.
-    =============================================================================
-    -->
-    <parent>
-        <groupId>37a4147b-4673-4cb6-b589-358074a13f8c</groupId>
-        <artifactId>common-pom-parent</artifactId>
-        <version>1.0.0</version>
-    </parent>
+	<!-- 
+	=============================================================================
+	 🛠 (4) BUILD
+		 - Geralmente deixamos apenas o essencial, pois plugins e configurações 
+		   já vêm do Parent.
+		 - Podemos sobrescrever configurações do mule-maven-plugin aqui, se precisar.
+	=============================================================================
+	-->
+	<build>
+		<!-- 🏷 Nome final do artefato gerado no target -->
+		<finalName>${app.namingPattern}</finalName>
 
-    <!-- 
-    =============================================================================
-     🛠 (4) BUILD
-         - Geralmente deixamos apenas o essencial, pois plugins e configurações 
-           já vêm do Parent.
-         - Podemos sobrescrever configurações do mule-maven-plugin aqui, se precisar.
-    =============================================================================
-    -->
-    <build>
-        <!-- 🏷 Nome final do artefato gerado no target -->
-        <finalName>${app.namingPattern}</finalName>
+		<plugins>
+			<!-- 
+			  🍃 Mule Maven Plugin
+				- Responsável por build e deploy no CloudHub.
+				- Configuração principal herdada do Parent POM.
+				- Para sobrescrever (ex.: vCores, workers, environmentName),
+				  adicionar <configuration> específico.
+			-->
+			<plugin>
+				<groupId>org.mule.tools.maven</groupId>
+				<artifactId>mule-maven-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<classifier>mule-application</classifier>
+				</configuration>
+			</plugin>
 
-        <plugins>
-            <!-- 
-              🍃 Mule Maven Plugin
-                - Responsável por build e deploy no CloudHub.
-                - Configuração principal herdada do Parent POM.
-                - Para sobrescrever (ex.: vCores, workers, environmentName),
-                  adicionar <configuration> específico.
-            -->
-            <plugin>
-                <groupId>org.mule.tools.maven</groupId>
-                <artifactId>mule-maven-plugin</artifactId>
-                <extensions>true</extensions>
-            </plugin>
+			<!-- 
+			  📊 MUnit Maven Plugin
+				- Para executar testes e cobertura de código MUnit.
+				- Também herdado do Parent, mas pode ser configurado aqui.
+			-->
+			<plugin>
+				<groupId>com.mulesoft.munit.tools</groupId>
+				<artifactId>munit-maven-plugin</artifactId>
+			</plugin>
 
-            <!-- 
-              📊 MUnit Maven Plugin
-                - Para executar testes e cobertura de código MUnit.
-                - Também herdado do Parent, mas pode ser configurado aqui.
-            -->
-            <plugin>
-                <groupId>com.mulesoft.munit.tools</groupId>
-                <artifactId>munit-maven-plugin</artifactId>
-            </plugin>
+			<!-- 
+			  🔧 Maven Clean Plugin
+				- Para limpeza de diretórios (target/ etc.).
+				- Herdado do Parent/BOM, mas incluído aqui a título de documentação.
+			-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.2.0</version>
+			</plugin>
+		</plugins>
+	</build>
 
-            <!-- 
-              🔧 Maven Clean Plugin
-                - Para limpeza de diretórios (target/ etc.).
-                - Herdado do Parent/BOM, mas incluído aqui a título de documentação.
-            -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+	<!-- 
+	=============================================================================
+	 📦 (5) DEPENDÊNCIAS
+		 - Graças ao BOM herdado, não precisamos informar versões de cada lib/plugin.
+		 - Basta definir groupId, artifactId e classifier.
+	=============================================================================
+	-->
+	<dependencies>
+		<!-- 🧪 Assertions para DataWeave (MUnit) -->
+		<dependency>
+			<groupId>org.mule.weave</groupId>
+			<artifactId>assertions</artifactId>
+			<scope>test</scope>
+		</dependency>
 
-    <!-- 
-    =============================================================================
-     📦 (5) DEPENDÊNCIAS
-         - Graças ao BOM herdado, não precisamos informar versões de cada lib/plugin.
-         - Basta definir groupId, artifactId e classifier.
-    =============================================================================
-    -->
-    <dependencies>
-        <!-- 🧪 Assertions para DataWeave (MUnit) -->
-        <dependency>
-            <groupId>org.mule.weave</groupId>
-            <artifactId>assertions</artifactId>
-            <scope>test</scope>
-        </dependency>
+		<!-- 🧩 Ferramentas do MUnit (mule-plugin) -->
+		<dependency>
+			<groupId>com.mulesoft.munit</groupId>
+			<artifactId>munit-tools</artifactId>
+			<classifier>mule-plugin</classifier>
+			<scope>test</scope>
+		</dependency>
 
-        <!-- 🧩 Ferramentas do MUnit (mule-plugin) -->
-        <dependency>
-            <groupId>com.mulesoft.munit</groupId>
-            <artifactId>munit-tools</artifactId>
-            <classifier>mule-plugin</classifier>
-            <scope>test</scope>
-        </dependency>
+		<!-- 🌐 Conector HTTP para Mule 4 -->
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-http-connector</artifactId>
+			<classifier>mule-plugin</classifier>
+		</dependency>
 
-        <!-- 🌐 Conector HTTP para Mule 4 -->
-        <dependency>
-            <groupId>org.mule.connectors</groupId>
-            <artifactId>mule-http-connector</artifactId>
-            <classifier>mule-plugin</classifier>
-        </dependency>
+		<!-- 🏃 Runner do MUnit (mule-plugin) -->
+		<dependency>
+			<groupId>com.mulesoft.munit</groupId>
+			<artifactId>munit-runner</artifactId>
+			<classifier>mule-plugin</classifier>
+			<scope>test</scope>
+		</dependency>
 
-        <!-- 🏃 Runner do MUnit (mule-plugin) -->
-        <dependency>
-            <groupId>com.mulesoft.munit</groupId>
-            <artifactId>munit-runner</artifactId>
-            <classifier>mule-plugin</classifier>
-            <scope>test</scope>
-        </dependency>
+		<!-- 💻 Conector de Sockets (opcional) -->
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-sockets-connector</artifactId>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+	</dependencies>
 
-        <!-- 💻 Conector de Sockets (opcional) -->
-        <dependency>
-            <groupId>org.mule.connectors</groupId>
-            <artifactId>mule-sockets-connector</artifactId>
-            <classifier>mule-plugin</classifier>
-        </dependency>
-    </dependencies>
+	<!-- 
+	=============================================================================
+	 📚 (6) REPOSITÓRIOS de Plugins e Dependências
+		 - Em muitos casos, são herdados do Parent. 
+		 - Aqui podemos sobrescrever ou incluir repositórios customizados.
+	=============================================================================
+	-->
+	<pluginRepositories>
+		<pluginRepository>
+			<id>mulesoft-releases</id>
+			<name>MuleSoft Releases Repository</name>
+			<url>https://repository.mulesoft.org/releases/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
-    <!-- 
-    =============================================================================
-     📚 (6) REPOSITÓRIOS de Plugins e Dependências
-         - Em muitos casos, são herdados do Parent. 
-         - Aqui podemos sobrescrever ou incluir repositórios customizados.
-    =============================================================================
-    -->
-    <pluginRepositories>
-        <pluginRepository>
-            <id>mulesoft-releases</id>
-            <name>MuleSoft Releases Repository</name>
-            <url>${mulesoft.releases.repo.url}</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
+	<repositories>
+		<!-- 🏢 Repositório de releases da MuleSoft (MUnit, conectores core etc.) -->
+		<repository>
+			<id>mulesoft-releases</id>
+			<name>MuleSoft Releases Repository</name>
+			<url>https://repository.mulesoft.org/releases/</url>
+			<layout>default</layout>
+		</repository>
 
-    <repositories>
-        <!-- 🌍 Repositório Público do Anypoint Exchange v3 -->
-        <repository>
-            <id>anypoint-exchange-v3</id>
-            <name>Anypoint Exchange</name>
-            <url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
-            <layout>default</layout>
-        </repository>
-
-        <!-- 🏢 Repositório de releases da MuleSoft -->
-        <repository>
-            <id>mulesoft-releases</id>
-            <name>MuleSoft Releases Repository</name>
-            <url>${mulesoft.releases.repo.url}</url>
-        </repository>
-
-        <!-- 🔐 Repositório Privado / Customizado -->
-        <repository>
-            <id>${serverId}</id>
-            <name>Private Exchange repository</name>
-            <url>${private.exchange.url}</url>
-            <layout>${private-exchange-repository.layout}</layout>
-        </repository>
-    </repositories>
+		<!-- 🔐 Exchange v2 da SUA organização (assets privados) -->
+		<repository>
+			<id>anypoint-exchange-v2-org</id>
+			<name>Anypoint Exchange v2 (Org)</name>
+			<url>${private.exchange.url}</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>anypoint-exchange-v3</id>
+			<name>Anypoint Exchange V3</name>
+			<url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
 
 </project>
