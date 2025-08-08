@@ -31,12 +31,12 @@
 	=============================================================================
 	-->
 	<groupId>9d86053c-c394-4e52-b33c-029e02b59822</groupId>
-	<artifactId>github-actions-new</artifactId>
-	<version>1.0.2</version>
+	<artifactId>github-actions</artifactId>
+	<version>3.2.0</version>
 	<packaging>mule-application</packaging>
 
 	<!-- 🏷 Nome de exibição e descrição do projeto -->
-	<name>github-actions-new</name>
+	<name>github-actions</name>
 	<description>
 	  Exemplo de projeto MuleSoft com build e deploy via GitHub Actions, 
 	  herda configs do parent-pom.
@@ -52,7 +52,7 @@
 	<parent>
 		<groupId>9d86053c-c394-4e52-b33c-029e02b59822</groupId>
 		<artifactId>common-pom-parent</artifactId>
-		<version>1.5.0</version>
+		<version>1.0.0</version>
 	</parent>
 
 	<!-- 
