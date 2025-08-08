@@ -75,26 +75,58 @@ jobs:
       # 4) Bump de versão só na branch atual (com [skip ci] p/ evitar loop)
       #########################################################################
       - name: 🔖 Incrementar versão do pom.xml (apenas branch atual)
-        if: ${{ github.actor != 'github-actions[bot]' }}  # evita loop
+        if: ${{ github.actor != 'github-actions[bot]' }}  # evita loop de commit do bot
+        env:
+          SETTINGS_FILE: .maven/settings.xml
+          ENV_NAME: ${{ github.ref_name }}                 # dev | qa | prod
+          ANYPOINT_CLIENT_ID: ${{ secrets.CONNECTED_APP_CLIENT_ID }}
+          ANYPOINT_CLIENT_SECRET: ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "🌿 Branch atual: $ENV_NAME"
-          echo "🔍 Lendo versão atual do POM"
-          CURR_VER=$(mvn -q -DforceStdout help:evaluate -Dexpression=project.version)
+          echo "🔍 Lendo versão atual do POM via Maven (com settings e credenciais)"
+
+          # tenta pelo Maven (precisa resolver parent/BOM do Exchange)
+          set +e
+          CURR_VER=$(mvn -B -U -q \
+            -s "$SETTINGS_FILE" -P "$ENV_NAME" \
+            -Dclient.id="$ANYPOINT_CLIENT_ID" \
+            -Dclient.secret="$ANYPOINT_CLIENT_SECRET" \
+            -DforceStdout help:evaluate -Dexpression=project.version 2>/dev/null | tail -n1)
+          RC=$?
+          set -e
+
+          if [ $RC -ne 0 ] || [ -z "$CURR_VER" ]; then
+            echo "⚠️  Maven help:evaluate falhou. Usando fallback por grep no pom.xml…"
+            CURR_VER=$(grep -m1 -E '^\s*<version>[^<]+' pom.xml | sed -E 's/.*<version>([^<]+)<\/version>.*/\1/')
+          fi
+
+          if [ -z "$CURR_VER" ]; then
+            echo "❌ Não consegui determinar a versão atual."
+            exit 1
+          fi
+
           echo "📌 Versão atual: $CURR_VER"
 
           IFS='.' read -r MAJOR MINOR PATCH <<< "$CURR_VER"
           NEW_VER="${MAJOR}.${MINOR}.$((PATCH + 1))"
           echo "🚀 Nova versão: $NEW_VER"
 
-          mvn -B -q versions:set -DnewVersion="$NEW_VER"
-          mvn -B -q versions:commit
+          # aplica nova versão usando o plugin versions (com settings e credenciais também)
+          mvn -B -U -q \
+            -s "$SETTINGS_FILE" -P "$ENV_NAME" \
+            -Dclient.id="$ANYPOINT_CLIENT_ID" \
+            -Dclient.secret="$ANYPOINT_CLIENT_SECRET" \
+            versions:set -DnewVersion="$NEW_VER"
+          mvn -q versions:commit
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add pom.xml
-          git commit -m "🔖 Bump version to $NEW_VER [skip ci]"
-          git push origin "$ENV_NAME"
+          git commit -m "🔖 Bump version to $NEW_VER [skip ci]" || echo "ℹ️ Nada para commitar"
+          git push origin "$ENV_NAME" || echo "ℹ️ Push ignorado (sem mudanças)"
+          echo "✅ Versão $NEW_VER publicada na branch $ENV_NAME"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
       #########################################################################
       # 5) Build + Publish Exchange + Deploy CloudHub (um único comando)
